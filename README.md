@@ -164,6 +164,29 @@ classDiagram
     Shape <|-- Polygon
 ```
 
+### Polygons Refactoring — After-State (Phase 4 ✅)
+
+Subagent Alpha's domain (`src/broken-python/polygons/polygons.py`) has been fully
+remediated. The target OOP diagram above is now the **actual** state of the code:
+
+- **Syntax/name errors fixed** — `class Polygon(Object)` → `Polygon(object)`, then `Polygon(Shape)`; removed the `new` keyword.
+- **God Functions eliminated** — `calc_polygon_details()` and `draw_polygon()` no longer exist at module level. Their logic now lives on `Polygon` as `calculate_internal_angle()`, `calculate_internal_angles_sum()`, `calculate_perimeter()`, and `draw()`.
+- **Abstract base added** — `Shape(ABC)` declares abstract `draw()` and `calculate_perimeter()`; `Polygon` inherits and overrides them.
+- **Dynamic geometry** — interior angle is now `(sides - 2) * 180 / sides` (verified 3→60°, 4→90°, 5→108°, 6→120°), and `draw()` loops `range(sides)` turning `360/sides` per edge, so `Polygon(5).draw()` traces a pentagon instead of always a hexagon.
+- **Quality gates** — `tests/test_polygons.py` covers init, perimeter, internal angle, the `Shape` inheritance contract, and a mocked-turtle `draw()` (**100% coverage** of the module); `ruff check src/broken-python/polygons/` is clean.
+
+**Before / After graph comparison:**
+
+| | Before-state | After-state |
+|---|---|---|
+| Graph | [`obsidian/graph.json`](obsidian/graph.json) | [`docs/after_state/graph.json`](docs/after_state/graph.json) |
+| Report | [`obsidian/GRAPH_REPORT.md`](obsidian/GRAPH_REPORT.md) | [`docs/after_state/GRAPH_REPORT.md`](docs/after_state/GRAPH_REPORT.md) |
+| Interactive | — | [`docs/after_state/graph.html`](docs/after_state/graph.html) |
+| Totals | 27 nodes · 23 edges · 6 communities | 35 nodes · 30 edges · 12 communities |
+| Polygons nodes | `Object`, `calc_polygon_details()`, `draw_polygon()`, 3× `# TODO` rationale | `Shape` (abstract) + `Polygon` with 5 methods; God Functions & `Object` removed |
+
+> The after-state was regenerated with the real Graphify CLI (`graphify update .`, v0.8.40, 100% AST-extracted, no LLM) run inside `src/broken-python/`. Graphify now reports `Polygon` → `Shape` as the top God Nodes (8 and 6 edges) and flags the new `Polygon --inherits--> Shape` bridge. The Math Quiz community is unchanged pending Phase 5.
+
 ## Agent Workflow (LangGraph)
 
 ```mermaid

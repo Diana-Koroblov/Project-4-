@@ -107,7 +107,7 @@ Every Python (.py) file created or modified in this project is subject to a 3-st
 ---
 
 ## Phase 4: Subagent Alpha (Polygons Refactoring)
-**Priority:** High | **Status:** Pending
+**Priority:** High | **Status:** Complete
 **Definition of Done (DoD):** Polygons system is refactored to a proper OOP architecture, passes Ruff with zero violations, and has ≥85% test coverage.
 
 ### 4.1 Pre-Refactoring Preparation
@@ -124,10 +124,10 @@ Every Python (.py) file created or modified in this project is subject to a 3-st
 - [x] 4.2.4 [Complete] [Developer] - Ran `uv run ruff check src/broken-python/polygons/` and fixed all violations | DoD: `ruff check` exits with code 0 and zero warnings for the Polygons domain.
 
 ### 4.3 Testing & Graph Proof
-- [ ] 4.3.1 [Pending] [Tester] - Fill in `tests/test_polygons.py` with full unit tests: `__init__`, `calculate_perimeter`, `calculate_internal_angle` for triangle/square/pentagon/hexagon, and `Shape` inheritance check | DoD: `pytest tests/test_polygons.py` passes with ≥85% coverage of the refactored Polygons module.
-  - [ ] **Validation:** Verify file length < 150 lines. If > 150, trigger refactoring/splitting module.
-- [ ] 4.3.2 [Pending] [Developer] - Run Graphify again after refactoring (`graphify update .`) and save updated graph to `docs/after_state/graph.json` and `docs/after_state/GRAPH_REPORT.md` | DoD: updated graph shows `calc_polygon_details` and `draw_polygon` as methods inside `Polygon`, not as standalone nodes.
-- [ ] 4.3.3 [Pending] [Developer] - Update README.md to reflect Phase 4 completion | DoD: README documents the Polygons refactoring, OOP after-state, and before/after graph comparison.
+- [x] 4.3.1 [Complete] [Tester] - Filled in `tests/test_polygons.py` with full unit tests: `__init__`, `calculate_perimeter`, `calculate_internal_angle`/`_sum` for triangle/square/pentagon/hexagon, `Shape` inheritance + abstractness, and a mocked-turtle `draw()` | DoD: `pytest tests/test_polygons.py` passes (17 tests) with **100%** coverage of the refactored Polygons module (≥85% required).
+  - [x] **Validation:** 102 lines — within 150-line limit.
+- [x] 4.3.2 [Complete] [Developer] - Ran `graphify update .` (real Graphify CLI `graphifyy` v0.8.40, AST-only, no LLM) inside `src/broken-python/` and saved the output to `docs/after_state/graph.json`, `docs/after_state/GRAPH_REPORT.md`, and `docs/after_state/graph.html` (interactive) | DoD: graph (35 nodes · 30 edges · 12 communities, 100% EXTRACTED) shows `Polygon` owning the former God Functions as methods (`calculate_internal_angle`, `calculate_perimeter`, `draw`) inheriting abstract `Shape`; `calc_polygon_details`/`draw_polygon`/`Object` nodes confirmed removed.
+- [x] 4.3.3 [Complete] [Developer] - Updated README.md to reflect Phase 4 completion | DoD: README documents the Polygons refactoring, OOP after-state, and a before/after graph comparison table linking both graphs/reports.
 
 ---
 
