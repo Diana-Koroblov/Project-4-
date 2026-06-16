@@ -1,75 +1,57 @@
 import turtle
+from abc import ABC, abstractmethod
 
-class Polygon(Object):
 
-    def __init__(self, sides, internal_angles_sum, internal_angle):
+class Shape(ABC):
+    """Abstract base class for drawable 2-D shapes."""
+
+    @abstractmethod
+    def draw(self):
+        """Render the shape."""
+
+    @abstractmethod
+    def calculate_perimeter(self):
+        """Return the perimeter of the shape."""
+
+
+class Polygon(Shape):
+    """A regular polygon with ``sides`` edges, each ``length`` units long."""
+
+    def __init__(self, sides, length=50):
         self.sides = sides
-        self.internal_angles_sum = internal_angles_sum
-        self.internal_angle = internal_angle
-        
+        self.length = length
 
-# calculate the total internal angles, and the angles within
-# a regular version of the polygon
-def calc_polygon_details(sides):
+    def calculate_internal_angles_sum(self):
+        """Sum of the interior angles: (n - 2) * 180."""
+        return (self.sides - 2) * 180
 
-    internal_angles_sum = 0
-    internal_angles = 0
+    def calculate_internal_angle(self):
+        """Single interior angle of a regular polygon: (n - 2) * 180 / n."""
+        return (self.sides - 2) * 180 / self.sides
 
-    # TODO: find a better way to work this stuff out
-    if sides == 3:
-        internal_angles_sum = 180
-        internal_angles = 60
-    elif sides == 4:
-        internal_angles_sum = 360
-        internal_angles = 90
-    else:
-        internal_angles_sum = 1000
-        internal_angles = 200
+    def calculate_perimeter(self):
+        """Perimeter: number of sides times the edge length."""
+        return self.sides * self.length
 
-    poly = new Polygon(sides, internal_angles_sum, internal_angles)
-    print(poly)
-
-    # return a dictionary containing info about the polygon
-    # TODO: perhaps I should use the class Polygon instead!
-    return {"sides": sides,
-            "internal_angles_sum": internal_angles_sum,
-            "internal_angles": internal_angles}
+    def draw(self):
+        """Draw the polygon with the turtle, turning 360/n degrees per edge."""
+        turtle.Screen()
+        t = turtle.Turtle()
+        t.pen(pencolor="red", pensize=2, fillcolor="green")
+        for _ in range(self.sides):
+            t.forward(self.length)
+            t.right(360 / self.sides)
 
 
+if __name__ == "__main__":
+    sides = int(input("How many sides does your polygon have?: "))
+    polygon = Polygon(sides)
 
-# draws a polygon using the turtle
-def draw_polygon(polygon_details):
+    print("    Sides:", polygon.sides)
+    print("    Internal angles sum:", polygon.calculate_internal_angles_sum())
+    print("    Internal angle:", polygon.calculate_internal_angle())
+    print("    Perimeter:", polygon.calculate_perimeter())
 
-    # set up the screen and turtle
-    scr = turtle.Screen()
-    t = turtle.Turtle()
-    t.pen(pencolor="red", pensize=2, fillcolor="green")
-
-    length_of_edge = 50
-    
-    # TODO: make this work for any type of polygon
-    for i in range(0, 6):
-        t.forward(length_of_edge)
-        t.right(60)
-
-
-
-
-sides = int(input("How many sides does your polygon have?: "))
-
-polygon_details = calc_polygon_details(sides)
-
-print("    Sides:", polygon_details["sides"])
-print("    Internal angles sum:", polygon_details["internal_angles_sum"])
-print("    Internal angles:", polygon_details["internal_angles"])
-
-draw = input("Would you like me to draw it? (Y/n): ")
-
-if draw == "" or draw.lower() == "y":
-    draw_polygon(polygon_details)
-        
-
-
-
-
-    
+    answer = input("Would you like me to draw it? (Y/n): ")
+    if answer == "" or answer.lower() == "y":
+        polygon.draw()

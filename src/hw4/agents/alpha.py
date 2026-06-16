@@ -1,22 +1,27 @@
 from langchain_core.language_models.chat_models import BaseChatModel
 from langchain_core.messages import SystemMessage
 
-from hw4.constants import OBSIDIAN_POLYGONS_PAGE
+from hw4.agents.alpha_prompt import ALPHA_SYSTEM_PROMPT
 from hw4.state import AgentState
-
-_SYSTEM_PROMPT = (
-    "You are Subagent Alpha, a specialist in the Polygons domain. "
-    f"Begin your investigation from the Obsidian page: {OBSIDIAN_POLYGONS_PAGE}. "
-    "Your scope is strictly limited to the Polygons community."
-)
+from hw4.tools.registry import bind_agent_tools
 
 
 def make_alpha_node(llm: BaseChatModel):
-    """Return the SubagentAlpha node bound to the given LLM (stub for Phase 4)."""
+    """Return the SubagentAlpha node bound to the Polygons toolset.
+
+    Runs one LLM turn over the running message history with the isolation
+    system prompt prepended. If the model requests tools the graph routes to
+    the tool node and re-enters here; the completion marker is recorded only
+    on the final, tool-free turn.
+    """
+    model = bind_agent_tools(llm)
+
     def subagent_alpha_node(state: AgentState) -> dict:
-        response = llm.invoke([SystemMessage(content=_SYSTEM_PROMPT)])
-        return {
-            "messages": [response],
-            "completed_tasks": state["completed_tasks"] + ["alpha:polygons:complete"],
-        }
+        messages = [SystemMessage(content=ALPHA_SYSTEM_PROMPT), *state["messages"]]
+        response = model.invoke(messages)
+        update: dict = {"messages": [response]}
+        if not getattr(response, "tool_calls", None):
+            update["completed_tasks"] = state["completed_tasks"] + ["alpha:polygons:complete"]
+        return update
+
     return subagent_alpha_node

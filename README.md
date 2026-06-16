@@ -179,14 +179,18 @@ The **Gatekeeper** node is the key innovation: it prevents Math Quiz context fro
 
 ### Orchestration Implementation
 
-The graph is compiled in `main.py` via `build_graph(llm=None)`, which accepts an optional LLM override for testing. The five nodes and their responsibilities:
+The graph is compiled in `main.py` via `build_graph(llm=None)`, which accepts an optional LLM override for testing. The nodes and their responsibilities:
 
 | Node | File | Responsibility |
 |------|------|----------------|
 | **Router** | `src/hw4/nodes/router.py` | Reads `obsidian/index.md`, seeds `current_phase="polygons"` and zeroes all lists |
 | **SubagentAlpha** | `src/hw4/agents/alpha.py` | Investigates and fixes the Polygons domain (Phase 4) |
+| **AlphaTools** | `langgraph.prebuilt.ToolNode` | Executes the tool calls Alpha emits, appends `ToolMessage`s, loops back to Alpha |
 | **Gatekeeper** | `src/hw4/nodes/gatekeeper.py` | Appends `phase:polygons:complete` to `completed_tasks`, issues `RemoveMessage` ops to wipe all Alpha messages, advances `current_phase` to `"mathsquiz"` |
 | **SubagentBeta** | `src/hw4/agents/beta.py` | Consolidates and fixes the Math Quiz domain (Phase 5) |
+| **BetaTools** | `langgraph.prebuilt.ToolNode` | Executes Beta's tool calls and loops back to Beta |
+
+Each subagent runs a bounded **tool loop**: a conditional edge inspects the last message — while it carries `tool_calls` the graph routes to that subagent's `ToolNode` and back; once a tool-free reply is produced, the subagent records its completion marker and the pipeline advances (Alpha → Gatekeeper, Beta → END).
 
 ### AgentState Schema
 
@@ -200,6 +204,19 @@ class AgentState(TypedDict):
 ```
 
 `messages` uses LangGraph's `add_messages` reducer so nodes can append with `{"messages": [msg]}`. The Gatekeeper clears the list between phases using `RemoveMessage` — the only node that performs a hard context reset.
+
+## Agent Tools & Guardrails
+
+The subagents act through a small set of **surgical, sandboxed tools** (`src/hw4/tools/`) rather than free-form file access. The functions are wrapped as LangChain `StructuredTool`s in `registry.py`, bound to the LLM via `.bind_tools()`, and executed by the `ToolNode`s. This is what keeps the agent graph-guided and token-efficient — it can only reach the precise content a tool exposes.
+
+| Tool | Signature | Guardrail |
+|------|-----------|-----------|
+| **read_obsidian_page** | `read_obsidian_page(page_name: str) -> str` | Resolves to `obsidian/{page}.md`; rejects path separators / `..` (`ValueError`) and unknown pages (`FileNotFoundError`) — no access outside the vault |
+| **extract_node_content** | `extract_node_content(node_id: str) -> str` | Resolves a node from `graph.json` to its single source file; `ValueError` if the node is absent or has no source — **refuses directory-wide reads** |
+| **read_source_file** | `read_source_file(path: str) -> str` | Confined to `src/broken-python/`; `PermissionError` for any path (incl. `..` escapes) outside it |
+| **write_source_file** | `write_source_file(path: str, content: str) -> None` | Same `src/broken-python/` sandbox; the only sanctioned way to mutate vendored source |
+
+`TokenTracker` (`token_tracker.py`) is the supporting instrumentation: it records `{phase, node, tokens_in, tokens_out, files_read}` per LLM call, exposes `get_summary()` (totals), and `save_log(path)` (JSON Lines → `results/token_log.jsonl`) — the raw data behind the Phase 6 token-efficiency proof.
 
 ## Architectural Decision Record (ADR-001): LangGraph over CrewAI
 

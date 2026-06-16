@@ -85,7 +85,7 @@ Every Python (.py) file created or modified in this project is subject to a 3-st
 ---
 
 ## Phase 3: Agent Toolset & Infrastructure
-**Priority:** High | **Status:** Pending
+**Priority:** High | **Status:** Complete
 **Definition of Done (DoD):** All surgical tools are implemented, individually unit-tested, and registered with the LangGraph subagent nodes.
 
 ### 3.1 Tool Implementation
@@ -95,14 +95,14 @@ Every Python (.py) file created or modified in this project is subject to a 3-st
   - [x] **Validation:** Verify file length < 150 lines. If > 150, trigger refactoring/splitting module. (58 lines)
 - [x] 3.1.3 [Complete] [Developer] - Implement `read_source_file(path: str) -> str` and `write_source_file(path: str, content: str)` in `src/hw4/tools/file_io.py`: both enforce that `path` is under `src/broken-python/`; `write_source_file` rejects paths outside the allowed subtree | DoD: read/write work on valid paths; invalid paths raise `PermissionError`.
   - [x] **Validation:** Verify file length < 150 lines. If > 150, trigger refactoring/splitting module. (70 lines)
-- [ ] 3.1.4 [Pending] [Developer] - Implement `TokenTracker` class in `src/tools/token_tracker.py`: wraps LLM calls and records `{phase, node, tokens_in, tokens_out, files_read}` per call; exposes `get_summary()` returning a dict of totals and a `save_log(path)` method | DoD: every LLM interaction is logged with all four required metrics.
-  - [ ] **Validation:** Verify file length < 150 lines. If > 150, trigger refactoring/splitting module.
+- [x] 3.1.4 [Complete] [Developer] - Implement `TokenTracker` class in `src/hw4/tools/token_tracker.py`: records `{phase, node, tokens_in, tokens_out, files_read}` per call (`record` + `record_response` reading LangChain `usage_metadata`); exposes `get_summary()` returning a dict of totals and a `save_log(path)` method (JSON Lines) | DoD: every LLM interaction is logged with all four required metrics.
+  - [x] **Validation:** 80 lines — within 150-line limit.
 
 ### 3.2 Tool Testing & Registration
-- [ ] 3.2.1 [Pending] [Tester] - Write unit tests in `tests/test_tools.py` for all four tools: happy-path calls, invalid input errors, and boundary conditions (e.g., node not in graph, path outside `src/broken-python/`) | DoD: `pytest tests/test_tools.py` passes with ≥85% coverage of `src/tools/`.
-  - [ ] **Validation:** Verify file length < 150 lines. If > 150, trigger refactoring/splitting module.
-- [ ] 3.2.2 [Pending] [Developer] - Register all tools with the LangGraph subagent nodes using `ToolNode` and bind them to the LLM via `.bind_tools()` | DoD: subagents can invoke tools by name; tool calls appear in the graph's message trace.
-- [ ] 3.2.3 [Pending] [Developer] - Update README.md to reflect Phase 3 completion | DoD: README lists all available agent tools, their signatures, and their guardrails.
+- [x] 3.2.1 [Complete] [Tester] - Write unit tests in `tests/test_tools.py` for all four tools: happy-path calls, invalid input errors, and boundary conditions (e.g., node not in graph, path outside `src/broken-python/`) | DoD: `pytest tests/test_tools.py` passes with **100%** coverage of `src/hw4/tools/` (≥85% required).
+  - [x] **Validation:** 144 lines — within 150-line limit.
+- [x] 3.2.2 [Complete] [Developer] - Register all tools with the LangGraph subagent nodes using `ToolNode` and bind them to the LLM via `.bind_tools()` (wrappers + `bind_agent_tools` in `src/hw4/tools/registry.py`; `AlphaTools`/`BetaTools` ToolNodes with conditional tool-loop edges in `main.py`; `bind_tools` degrades gracefully for fake models) | DoD: subagents can invoke tools by name; tool calls appear in the graph's message trace (proven by `TestToolInvocation` in `tests/test_graph.py`).
+- [x] 3.2.3 [Complete] [Developer] - Update README.md to reflect Phase 3 completion | DoD: README lists all available agent tools, their signatures, and their guardrails (new "Agent Tools & Guardrails" section + updated orchestration table with the two ToolNodes).
 
 ---
 
@@ -111,17 +111,17 @@ Every Python (.py) file created or modified in this project is subject to a 3-st
 **Definition of Done (DoD):** Polygons system is refactored to a proper OOP architecture, passes Ruff with zero violations, and has ≥85% test coverage.
 
 ### 4.1 Pre-Refactoring Preparation
-- [ ] 4.1.1 [Pending] [Architect] - Configure Subagent Alpha system prompt in `src/agents/alpha_prompt.py` for domain isolation | DoD: prompt explicitly forbids reading any file outside the Polygons community; prompt references `hot_polygons.md` as the sole entry point.
-- [ ] 4.1.2 [Pending] [Developer] - Add `if __name__ == "__main__":` guard to `src/broken-python/polygons/polygons.py` to make it safely importable by the test suite without triggering side effects (turtle window, `input()` calls) | DoD: `import polygons` does not open a window or prompt for input.
+- [x] 4.1.1 [Complete] [Architect] - Configure Subagent Alpha system prompt in `src/hw4/agents/alpha_prompt.py` (`ALPHA_SYSTEM_PROMPT`; alpha.py now imports it) for domain isolation | DoD: prompt explicitly forbids reading any file outside the Polygons community; prompt references `hot_polygons.md` as the sole entry point.
+- [x] 4.1.2 [Complete] [Developer] - Add `if __name__ == "__main__":` guard to `src/broken-python/polygons/polygons.py` to make it safely importable by the test suite without triggering side effects (turtle window, `input()` calls) | DoD: `import polygons` does not open a window or prompt for input.
 
 ### 4.2 Refactoring
-- [ ] 4.2.1 [Pending] [Developer] - Fix all syntax errors in `polygons.py`: replace `Object` with `object` as base class; remove `new` keyword from instantiation | DoD: `python -c "import polygons"` raises no `SyntaxError` or `NameError`.
-  - [ ] **Validation:** Verify file length < 150 lines. If > 150, trigger refactoring/splitting module.
-- [ ] 4.2.2 [Pending] [Developer] - Refactor into OOP architecture: move `calc_polygon_details` and `draw_polygon` as methods inside the `Polygon` class; create abstract `Shape` base class with `draw()` and `calculate_perimeter()` | DoD: `Polygon` inherits from `Shape`; no module-level God Functions remain.
-  - [ ] **Validation:** Verify file length < 150 lines. If > 150, trigger refactoring/splitting module.
-- [ ] 4.2.3 [Pending] [Developer] - Fix dynamic math: replace hardcoded angle logic (3/4-side only) with the general formula `internal_angle = (sides - 2) * 180 / sides`; fix turtle loop from `range(0,6)` + `60°` to `range(sides)` + `360/sides` | DoD: calling `Polygon(5).draw()` draws a pentagon, not a hexagon.
-  - [ ] **Validation:** Verify file length < 150 lines. If > 150, trigger refactoring/splitting module.
-- [ ] 4.2.4 [Pending] [Developer] - Run `uv run ruff check src/broken-python/polygons/` and fix all violations | DoD: `ruff check` exits with code 0 and zero warnings for the Polygons domain.
+- [x] 4.2.1 [Complete] [Developer] - Fix all syntax errors in `polygons.py`: replace `Object` with `object` as base class; remove `new` keyword from instantiation | DoD: `python -c "import polygons"` raises no `SyntaxError` or `NameError`.
+  - [x] **Validation:** 77 lines — within 150-line limit.
+- [x] 4.2.2 [Complete] [Developer] - Refactor into OOP architecture: `calc_polygon_details` and `draw_polygon` are now methods inside the `Polygon` class (as `calculate_internal_angle()`/`calculate_internal_angles_sum()` and `draw()`); added abstract `Shape` base class with `draw()` and `calculate_perimeter()` | DoD: `Polygon` inherits from `Shape`; no module-level God Functions remain (only `Shape`/`Polygon` classes + `__main__` guard).
+  - [x] **Validation:** 58 lines — within 150-line limit.
+- [x] 4.2.3 [Complete] [Developer] - Fix dynamic math: replaced hardcoded angle logic with `internal_angle = (sides - 2) * 180 / sides` (verified 3→60, 4→90, 5→108, 6→120) and turtle loop now `range(self.sides)` + `360/self.sides` | DoD: `Polygon(5).draw()` traces a pentagon (108° interior, 72° exterior turn), not a hexagon.
+  - [x] **Validation:** 58 lines — within 150-line limit.
+- [x] 4.2.4 [Complete] [Developer] - Ran `uv run ruff check src/broken-python/polygons/` and fixed all violations | DoD: `ruff check` exits with code 0 and zero warnings for the Polygons domain.
 
 ### 4.3 Testing & Graph Proof
 - [ ] 4.3.1 [Pending] [Tester] - Fill in `tests/test_polygons.py` with full unit tests: `__init__`, `calculate_perimeter`, `calculate_internal_angle` for triangle/square/pentagon/hexagon, and `Shape` inheritance check | DoD: `pytest tests/test_polygons.py` passes with ≥85% coverage of the refactored Polygons module.
@@ -163,7 +163,7 @@ Every Python (.py) file created or modified in this project is subject to a 3-st
   - [ ] **Validation:** Verify file length < 150 lines. If > 150, trigger refactoring/splitting module.
 
 ### 6.2 Token Efficiency Report
-- [ ] 6.2.1 [Pending] [Developer] - Compare guided agent token log vs. baseline log and populate `reports/efficiency_report.md` with a table showing: total tokens in/out, files read, iterations, and % savings for each phase | DoD: report demonstrates >70% token reduction vs. baseline; table is reproducible from `results/token_log.jsonl`.
+- [ ] 6.2.1 [Pending] [Developer] - Compare guided agent token log vs. baseline log and populate `reports/efficiency_report.md` with a table showing all four metrics mandated by §5.5: (a) total tokens in/out, (b) files / text units read, (c) iterations / investigation rounds, and (d) quality or speed of reaching the root cause and fix (e.g. rounds-to-root-cause, correct-fix-on-first-try), reported per phase | DoD: report demonstrates >70% token reduction vs. baseline AND contrasts root-cause quality/speed between the two modes; table is reproducible from `results/token_log.jsonl`.
 
 ### 6.3 Bug Analysis Report
 - [ ] 6.3.1 [Pending] [Developer] - Complete `reports/bug_analysis.md` for the Polygons community: list each bug with problem statement, root cause, investigation trail (which graph nodes were traversed), and the fix applied | DoD: covers all 4 Polygons bugs (`Object`, `new`, hardcoded angles, wrong turtle loop).
@@ -212,6 +212,10 @@ Every Python (.py) file created or modified in this project is subject to a 3-st
 - [ ] 8.1.10 [Pending] - Token efficiency results summary (link to `reports/efficiency_report.md`)
 - [ ] 8.1.11 [Pending] - Orphan Node Detector usage section
 - [ ] 8.1.12 [Pending] - License and attribution section (credit `martinpeck/broken-python`)
+- [ ] 8.1.13 [Pending] - "Tooling Workflow" section explaining how Grphify and Obsidian were used in practice (§8 bullet 6): how `graph.json`/`GRAPH_REPORT.md` were generated, how `index.md` → `hot_*.md` drove navigation, and why the vault is an active knowledge space rather than a file dump
+- [ ] 8.1.14 [Pending] - "Reverse-Engineering Walkthrough" section narrating the RE process performed (§8 bullet 7): how the real architecture, central components, and God Nodes were uncovered from sparse docs (expands beyond the Q&A bullets)
+- [ ] 8.1.15 [Pending] - "Bug → Root Cause → Fix" summary section in the README itself (§8 bullet 8), linking to `reports/bug_analysis.md` for the full trail | DoD: each community's headline bug, its root cause, and the applied fix appear directly in the README
+- [ ] 8.1.16 [Pending] - "Before / After" section in the README (§8 bullet 9) presenting both the code diff (`git diff before-agent HEAD`) and the knowledge delta (`obsidian/knowledge_delta.md`), with before/after graph or schema visuals
 
 ### 8.2 Visual Assets
 - [ ] 8.2.1 [Pending] - Screenshot of Obsidian vault after-state (post-refactoring graph) → `assets/obsidian_vault_after.png`

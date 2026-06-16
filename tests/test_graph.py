@@ -63,3 +63,36 @@ class TestGraphTraversal:
         result = app.invoke(_initial_state())
         assert len(result["token_log"]) >= 1
         assert result["token_log"][0]["event"] == "router_loaded_index"
+
+
+class TestToolInvocation:
+    def test_tool_calls_execute_and_appear_in_trace(self):
+        """A subagent tool call is routed to the ToolNode and yields a ToolMessage."""
+        from langchain_core.language_models.fake_chat_models import FakeMessagesListChatModel
+        from langchain_core.messages import AIMessage, ToolMessage
+
+        from main import build_graph
+
+        tool_call = {
+            "name": "read_obsidian_page",
+            "args": {"page_name": "hot_polygons"},
+            "id": "call_1",
+            "type": "tool_call",
+        }
+        responses = [
+            AIMessage(content="", tool_calls=[tool_call]),  # Alpha -> AlphaTools
+            AIMessage(content="alpha done"),                # Alpha -> Gatekeeper
+            AIMessage(content="beta done"),                 # Beta  -> END
+        ]
+        app = build_graph(llm=FakeMessagesListChatModel(responses=responses))
+
+        tool_messages = [
+            msg
+            for event in app.stream(_initial_state())
+            for update in event.values()
+            if isinstance(update, dict)
+            for msg in update.get("messages", [])
+            if isinstance(msg, ToolMessage)
+        ]
+        assert tool_messages, "Expected a ToolMessage from the AlphaTools node in the trace"
+        assert tool_messages[0].name == "read_obsidian_page"
