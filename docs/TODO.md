@@ -136,8 +136,8 @@ Every Python (.py) file created or modified in this project is subject to a 3-st
 **Definition of Done (DoD):** Math Quiz is consolidated into a single OOP `MathQuiz` class, all step files removed, passes Ruff with zero violations, and has ≥85% test coverage.
 
 ### 5.1 Preparation
-- [ ] 5.1.1 [Pending] [Architect] - Configure Subagent Beta system prompt in `src/hw4/agents/beta_prompt.py` for domain isolation | DoD: prompt explicitly forbids reading any file outside the Math Quiz community; prompt references `hot_mathsquiz.md` as the sole entry point.
-- [ ] 5.1.2 [Pending] [Developer] - Add `if __name__ == "__main__":` guard to `src/broken-python/mathsquiz/mathsquiz.py` to make it safely importable | DoD: `import mathsquiz` does not prompt for input or print to stdout.
+- [x] 5.1.1 [Complete] [Architect] - Configure Subagent Beta system prompt in `src/hw4/agents/beta_prompt.py` for domain isolation | DoD: prompt explicitly forbids reading any file outside the Math Quiz community; prompt references `hot_mathsquiz.md` as the sole entry point.
+- [x] 5.1.2 [Complete] [Developer] - Add `if __name__ == "__main__":` guard to `src/broken-python/mathsquiz/mathsquiz.py` to make it safely importable | DoD: `import mathsquiz` does not prompt for input or print to stdout.
 
 ### 5.2 Consolidation
 - [ ] 5.2.1 [Pending] [Developer] - Analyse step files (`mathsquiz-step1.py`, `mathsquiz-step2.py`, `mathsquiz-step3.py`) and document the evolution in `reports/mathsquiz_step_analysis.md` | DoD: report explains what each step file adds and confirms the final `mathsquiz.py` supersedes all three.
