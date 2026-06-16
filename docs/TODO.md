@@ -15,124 +15,212 @@ Every Python (.py) file created or modified in this project is subject to a 3-st
 ---
 
 ## Phase 0: Knowledge-Base & Reverse-Engineering Foundation
-**Priority:** High | **Status:** In Progress
+**Priority:** High | **Status:** Complete
 **Definition of Done (DoD):** Base source is vendored, the Graphify graph and Obsidian vault exist, and the reverse-engineering schemas + research questions are documented.
 
 ### 0.1 Base Repository & Graph Products
 - [x] 0.1.1 [Complete] [Architect] - Select base repo (`martinpeck/broken-python`) and justify the choice in README | DoD: README states the chosen repo and rationale.
-- [ ] 0.1.2 [Pending] [Developer] - Vendor the original buggy source into `src/` (`polygons/polygons.py`, `mathsquiz/mathsquiz-step1..3.py`, `mathsquiz/mathsquiz.py`) as the immutable "before" snapshot | DoD: original buggy files present under `src/` and committed (currently `src/` is empty).
+- [x] 0.1.2 [Complete] [Developer] - Vendor the original buggy source into `src/broken-python/` (`polygons/polygons.py`, `mathsquiz/mathsquiz-step1..3.py`, `mathsquiz/mathsquiz.py`) as the immutable "before" snapshot | DoD: original buggy files present under `src/broken-python/` and committed.
 - [x] 0.1.3 [Complete] [Architect] - Generate Graphify products (`graph.json`, `GRAPH_REPORT.md`) mapping the two communities | DoD: `obsidian/graph.json` + `obsidian/GRAPH_REPORT.md` exist (27 nodes, 6 communities, Polygons + Math Quiz isolated).
 
 ### 0.2 Obsidian Vault & Reverse-Engineering Deliverables
 - [x] 0.2.1 [Complete] [Architect] - Build Obsidian navigation pages (`index.md`, `hot_polygons.md`, `hot_mathsquiz.md`, community hub page) | DoD: linked vault with central index and focused `hot_*` context pages exists.
 - [x] 0.2.2 [Complete] [Architect] - Author `docs/PRD.md` and `docs/PLAN.md` (including the ADR for choosing LangGraph) | DoD: PRD + PLAN committed.
-- [ ] 0.2.3 [Pending] [Architect] - Produce the **Architectural Block Schema** of the *existing* system (main blocks + flow between them), not just a folder/file list | DoD: block diagram committed under `obsidian/` or `reports/` and linked from README.
-- [ ] 0.2.4 [Pending] [Architect] - Produce the **OOP Schema** of the before-state (classes, inheritance, composition, and the procedural "God Functions" outside `Polygon`) | DoD: OOP class diagram committed and linked from README.
-- [ ] 0.2.5 [Pending] [Architect] - Document explicit answers to the 8 Research Questions (real architecture, key components, God Nodes, how the bug/root-cause was found, value of graph vs. linear reading, token savings, future agent improvements) | DoD: each research question is addressed in README and/or Obsidian.
+- [x] 0.2.3 [Complete] [Architect] - Produce the **Architectural Block Schema** of the *existing* system (main blocks + flow between them), not just a folder/file list | DoD: `docs/block_schema.md` committed with annotated Mermaid diagram and linked from README.
+- [x] 0.2.4 [Complete] [Architect] - Produce the **OOP Schema** of the before-state (classes, inheritance, composition, and the procedural "God Functions" outside `Polygon`) | DoD: `docs/oop_schema.md` committed with before-state and target-state class diagrams, linked from README.
+- [x] 0.2.5 [Complete] [Architect] - Document explicit answers to the 8 Research Questions (real architecture, key components, God Nodes, how the bug/root-cause was found, value of graph vs. linear reading, token savings, future agent improvements) | DoD: all 8 research questions answered in README under "Research Questions" section.
 
 ---
 
 ## Phase 1: Environment & Repository Setup
-**Priority:** High | **Status:** In Progress
+**Priority:** High | **Status:** Complete
 **Definition of Done (DoD):** The environment is initialized, UV is configured, dependencies are locked, and the base folder structure exists on disk.
 
 ### 1.1 Repository & Environment Genesis
-- [ ] 1.1.1 [Pending] [Architect] - Ensure full directory layout exists (`src/`, `tests/`, `obsidian/`, `reports/`, `docs/`) | DoD: all 5 directories physically exist on disk (currently `tests/` and `reports/` are missing).
+- [x] 1.1.1 [Complete] [Architect] - Ensure full directory layout exists (`src/`, `tests/`, `obsidian/`, `reports/`, `docs/`) | DoD: all 5 directories physically exist on disk.
 - [x] 1.1.2 [Complete] [Developer] - Initialize project and virtual environment via `uv init` / `uv venv` | DoD: `pyproject.toml` and `.python-version` generated.
-- [ ] 1.1.3 [Pending] [Developer] - Add and lock dependencies (`langgraph`, `langchain-core`, `ruff`, `pytest`, `pytest-cov`) via UV | DoD: `uv.lock` generated and dependencies available (currently `pyproject.toml` has `dependencies = []`).
-- [ ] 1.1.4 [Pending] [Developer] - Update README.md to reflect Phase 1 completion | DoD: README contains the project overview and current file tree.
+- [x] 1.1.3 [Complete] [Developer] - Add and lock dependencies (`langgraph`, `langchain-core`, `ruff`, `pytest`, `pytest-cov`) via UV | DoD: `uv.lock` generated and all dependencies available.
+- [x] 1.1.4 [Complete] [Developer] - Update README.md to reflect Phase 1 completion | DoD: README contains the project overview and current file tree.
+
+### 1.2 Guidelines Compliance — Structural Scaffolding
+- [x] 1.2.0 [Complete] [Architect] - Create `config/` directory with `setup.json`, `rate_limits.json`, `logging_config.json` | DoD: all three files exist and contain valid JSON; no config values are hardcoded in source.
+- [x] 1.2.1 [Complete] [Developer] - Create `.env-example` with dummy API key placeholders and patch `.gitignore` to include `.env`, `*.key`, `*.pem`, `credentials.json` | DoD: `.env-example` committed; `.gitignore` covers all secret patterns.
+- [x] 1.2.2 [Complete] [Architect] - Scaffold `src/hw4/` Python package with `__init__.py` (`__version__`, `__author__`), `constants.py`, `shared/version.py`, and `sdk/__init__.py` | DoD: `from hw4 import __version__` works.
+- [x] 1.2.3 [Complete] [Architect] - Create `results/` and `notebooks/` directories (with `.gitkeep`) | DoD: both directories exist in the repo.
+- [x] 1.2.4 [Complete] [Architect] - Create per-mechanism PRD documents: `docs/PRD_langgraph_orchestration.md`, `docs/PRD_gatekeeper.md`, `docs/PRD_token_tracker.md`, `docs/PRD_node_extractor.md`, `docs/PRD_orphan_detector.md` | DoD: all 5 files exist with problem statement, functional requirements, and acceptance criteria.
+- [x] 1.2.5 [Complete] [Developer] - Create `docs/prompts_log.md` (Prompts Engineering Log per §8.3) | DoD: file exists with initial entries and template for all phases.
+
+### 1.3 LLM Provider Configuration
+- [x] 1.3.1 [Complete] [Developer] - Selected Anthropic (Claude) as LLM provider; added `langchain-anthropic` and `python-dotenv` to `pyproject.toml` | DoD: dependencies added; run `uv sync` to update `uv.lock`.
+- [ ] 1.3.2 [Pending] [Developer] - Create `.env` locally (gitignored) with `ANTHROPIC_API_KEY=<your-key>` | DoD: `.env` present locally; `get_llm()` in `src/hw4/llm_config.py` loads without error.
+- [x] 1.3.3 [Complete] [Developer] - Created `src/hw4/llm_config.py` with `get_llm()` that loads API key from `.env` via `python-dotenv` and returns a `ChatAnthropic` instance; model/temperature/max_tokens read from `config/setup.json` | DoD: module is importable, raises `EnvironmentError` if key is missing.
+  - [x] **Validation:** 48 lines — within 150-line limit.
+
+### 1.4 Before-State Snapshot Lock
+- [ ] 1.4.1 [Pending] [Developer] - Commit and git-tag the current repository state as `before-agent` before any agent-driven code modifications | DoD: `git tag before-agent` exists; `git diff before-agent HEAD` produces a clean, human-readable before/after proof for the submission.
 
 ---
 
 ## Phase 2: Core Orchestration Engine (LangGraph)
 **Priority:** High | **Status:** Pending
-**Definition of Done (DoD):** The StateGraph is defined, nodes are connected, and the sequential execution flow is runnable.
+**Definition of Done (DoD):** The StateGraph is defined, nodes are connected, and the sequential execution flow is runnable end-to-end (dry run with mocked LLM passes).
 
-### 2.1 LangGraph Framework Construction
-- [ ] 2.1.1 [Pending] [Architect] - Define the `AgentState` schema using `TypedDict` in `src/state.py` | DoD: State contains `current_phase`, `messages`, `errors`, and `completed_tasks`.
+### 2.1 AgentState Schema
+- [ ] 2.1.1 [Pending] [Architect] - Define the `AgentState` schema using `TypedDict` in `src/state.py` with the following fields: `current_phase` (str), `messages` (list), `errors` (list), `completed_tasks` (list), `token_log` (list) | DoD: schema importable and all fields typed correctly.
   - [ ] **Validation:** Verify file length < 150 lines. If > 150, trigger refactoring/splitting module.
-- [ ] 2.1.2 [Pending] [Developer] - Implement the Master Router node to read `index.md` and direct initial state | DoD: Router correctly identifies the Polygons community as the first task.
+
+### 2.2 Graph Nodes
+- [ ] 2.2.1 [Pending] [Developer] - Implement the **Master Router** node in `src/nodes/router.py`: reads `obsidian/index.md`, sets `current_phase = "polygons"`, initializes empty `messages`, `errors`, `completed_tasks`, and `token_log` | DoD: Router correctly seeds state and routes to Subagent Alpha.
   - [ ] **Validation:** Verify file length < 150 lines. If > 150, trigger refactoring/splitting module.
-- [ ] 2.1.3 [Pending] [Developer] - Implement the Gatekeeper node for context compaction | DoD: Gatekeeper successfully purges `messages` history while preserving `completed_tasks`.
+- [ ] 2.2.2 [Pending] [Developer] - Implement the **Gatekeeper** node in `src/nodes/gatekeeper.py`: logs `completed_tasks` from Alpha, purges `messages` list entirely, sets `current_phase = "mathsquiz"` | DoD: after Gatekeeper runs, `messages` is empty and `completed_tasks` is preserved.
   - [ ] **Validation:** Verify file length < 150 lines. If > 150, trigger refactoring/splitting module.
-- [ ] 2.1.4 [Pending] [Architect] - Compile the `StateGraph` with strict sequential edges (`START -> Router -> Alpha -> Gatekeeper -> Beta -> END`) | DoD: The graph compiles without errors and follows the planned path.
+
+### 2.3 StateGraph Assembly
+- [ ] 2.3.1 [Pending] [Architect] - Compile the `StateGraph` in `main.py` with strict sequential edges: `START → Router → SubagentAlpha → Gatekeeper → SubagentBeta → END` | DoD: graph compiles without errors; `graph.get_graph().draw_mermaid()` matches the planned workflow diagram.
   - [ ] **Validation:** Verify file length < 150 lines. If > 150, trigger refactoring/splitting module.
-- [ ] 2.1.5 [Pending] [Developer] - Update README.md to reflect Phase 2 completion | DoD: README documents the LangGraph orchestration and Gatekeeper behavior.
+- [ ] 2.3.2 [Pending] [Tester] - Write a dry-run smoke test in `tests/test_graph.py` using a mocked LLM (`FakeListChatModel`) that confirms the graph traverses all 5 nodes in order without errors | DoD: `pytest tests/test_graph.py` passes.
+  - [ ] **Validation:** Verify file length < 150 lines. If > 150, trigger refactoring/splitting module.
+- [ ] 2.3.3 [Pending] [Developer] - Update README.md to reflect Phase 2 completion | DoD: README documents the LangGraph orchestration, Gatekeeper behavior, and includes the workflow Mermaid diagram.
 
 ---
 
 ## Phase 3: Agent Toolset & Infrastructure
 **Priority:** High | **Status:** Pending
-**Definition of Done (DoD):** Surgical tools for Obsidian reading, file operations, and token tracking are fully functional.
+**Definition of Done (DoD):** All surgical tools are implemented, individually unit-tested, and registered with the LangGraph subagent nodes.
 
-### 3.1 Surgical Tool Development
-- [ ] 3.1.1 [Pending] [Developer] - Implement `read_obsidian_page` for surgical context retrieval | DoD: Tool retrieves content from `hot_*.md` without reading unrelated files.
-- [ ] 3.1.2 [Pending] [Developer] - Implement a Node Content Extractor that pulls a single node/file identified in `graph.json` (no recursive folder scanning) | DoD: Tool returns one node's source on demand and refuses directory-wide reads.
-- [ ] 3.1.3 [Pending] [Developer] - Implement standard file I/O operations (`read_source_file`, `write_source_file`) | DoD: Tool allows the agent to read and modify specific files in `src/`.
-- [ ] 3.1.4 [Pending] [Developer] - Implement the Token Tracker/Logger utility | DoD: Every agent interaction is logged with token-consumption and files-read metrics.
-- [ ] 3.1.5 [Pending] [Developer] - Update README.md to reflect Phase 3 completion | DoD: README lists all available agent tools and their guardrails.
+### 3.1 Tool Implementation
+- [ ] 3.1.1 [Pending] [Developer] - Implement `read_obsidian_page(page_name: str) -> str` in `src/tools/obsidian_reader.py`: resolves the page name to `obsidian/{page_name}.md`, reads and returns content, raises `FileNotFoundError` for unknown pages | DoD: tool retrieves hot pages without touching unrelated files.
+  - [ ] **Validation:** Verify file length < 150 lines. If > 150, trigger refactoring/splitting module.
+- [ ] 3.1.2 [Pending] [Developer] - Implement `extract_node_content(node_id: str) -> str` in `src/tools/node_extractor.py`: looks up the node's file path in `obsidian/graph.json` and returns its raw source; raises `ValueError` if the node is not in the graph (refuses directory-wide reads entirely) | DoD: tool resolves any valid graph node to its source in one call.
+  - [ ] **Validation:** Verify file length < 150 lines. If > 150, trigger refactoring/splitting module.
+- [ ] 3.1.3 [Pending] [Developer] - Implement `read_source_file(path: str) -> str` and `write_source_file(path: str, content: str)` in `src/tools/file_io.py`: both enforce that `path` is under `src/broken-python/`; `write_source_file` rejects paths outside the allowed subtree | DoD: read/write work on valid paths; invalid paths raise `PermissionError`.
+  - [ ] **Validation:** Verify file length < 150 lines. If > 150, trigger refactoring/splitting module.
+- [ ] 3.1.4 [Pending] [Developer] - Implement `TokenTracker` class in `src/tools/token_tracker.py`: wraps LLM calls and records `{phase, node, tokens_in, tokens_out, files_read}` per call; exposes `get_summary()` returning a dict of totals and a `save_log(path)` method | DoD: every LLM interaction is logged with all four required metrics.
+  - [ ] **Validation:** Verify file length < 150 lines. If > 150, trigger refactoring/splitting module.
+
+### 3.2 Tool Testing & Registration
+- [ ] 3.2.1 [Pending] [Tester] - Write unit tests in `tests/test_tools.py` for all four tools: happy-path calls, invalid input errors, and boundary conditions (e.g., node not in graph, path outside `src/broken-python/`) | DoD: `pytest tests/test_tools.py` passes with ≥85% coverage of `src/tools/`.
+  - [ ] **Validation:** Verify file length < 150 lines. If > 150, trigger refactoring/splitting module.
+- [ ] 3.2.2 [Pending] [Developer] - Register all tools with the LangGraph subagent nodes using `ToolNode` and bind them to the LLM via `.bind_tools()` | DoD: subagents can invoke tools by name; tool calls appear in the graph's message trace.
+- [ ] 3.2.3 [Pending] [Developer] - Update README.md to reflect Phase 3 completion | DoD: README lists all available agent tools, their signatures, and their guardrails.
 
 ---
 
 ## Phase 4: Subagent Alpha (Polygons Refactoring)
 **Priority:** High | **Status:** Pending
-**Definition of Done (DoD):** Polygons system is refactored to an OOP architecture with 85% test coverage.
+**Definition of Done (DoD):** Polygons system is refactored to a proper OOP architecture, passes Ruff with zero violations, and has ≥85% test coverage.
 
-### 4.1 Polygons Remediation Lifecycle
-- [ ] 4.1.1 [Pending] [Architect] - Configure Subagent Alpha system prompt for domain isolation | DoD: Prompt forbids interaction with any files outside the Polygons community.
-- [ ] 4.1.2 [Pending] [Developer] - Refactor `polygons.py` into a proper OOP architecture (`Shape` -> `Polygon`) | DoD: Inheritance is established and calculations are encapsulated.
+### 4.1 Pre-Refactoring Preparation
+- [ ] 4.1.1 [Pending] [Architect] - Configure Subagent Alpha system prompt in `src/agents/alpha_prompt.py` for domain isolation | DoD: prompt explicitly forbids reading any file outside the Polygons community; prompt references `hot_polygons.md` as the sole entry point.
+- [ ] 4.1.2 [Pending] [Developer] - Add `if __name__ == "__main__":` guard to `src/broken-python/polygons/polygons.py` to make it safely importable by the test suite without triggering side effects (turtle window, `input()` calls) | DoD: `import polygons` does not open a window or prompt for input.
+
+### 4.2 Refactoring
+- [ ] 4.2.1 [Pending] [Developer] - Fix all syntax errors in `polygons.py`: replace `Object` with `object` as base class; remove `new` keyword from instantiation | DoD: `python -c "import polygons"` raises no `SyntaxError` or `NameError`.
   - [ ] **Validation:** Verify file length < 150 lines. If > 150, trigger refactoring/splitting module.
-- [ ] 4.1.3 [Pending] [Developer] - Remediate syntax corruption and "God Functions" (`Object`->`object`, `new` keyword, hardcoded 3/4-side angles, fixed hexagon turtle loop) | DoD: dynamic per-side math; drawing/calculation encapsulated in `Polygon`.
+- [ ] 4.2.2 [Pending] [Developer] - Refactor into OOP architecture: move `calc_polygon_details` and `draw_polygon` as methods inside the `Polygon` class; create abstract `Shape` base class with `draw()` and `calculate_perimeter()` | DoD: `Polygon` inherits from `Shape`; no module-level God Functions remain.
   - [ ] **Validation:** Verify file length < 150 lines. If > 150, trigger refactoring/splitting module.
-- [ ] 4.1.4 [Pending] [Tester] - Implement unit tests for Polygons in `tests/test_polygons.py` | DoD: Pytest report shows >= 85% coverage for the Polygons domain.
+- [ ] 4.2.3 [Pending] [Developer] - Fix dynamic math: replace hardcoded angle logic (3/4-side only) with the general formula `internal_angle = (sides - 2) * 180 / sides`; fix turtle loop from `range(0,6)` + `60°` to `range(sides)` + `360/sides` | DoD: calling `Polygon(5).draw()` draws a pentagon, not a hexagon.
   - [ ] **Validation:** Verify file length < 150 lines. If > 150, trigger refactoring/splitting module.
-- [ ] 4.1.5 [Pending] [Developer] - Update README.md to reflect Phase 4 completion | DoD: README includes the refactored OOP class diagram for Polygons.
+- [ ] 4.2.4 [Pending] [Developer] - Run `uv run ruff check src/broken-python/polygons/` and fix all violations | DoD: `ruff check` exits with code 0 and zero warnings for the Polygons domain.
+
+### 4.3 Testing & Graph Proof
+- [ ] 4.3.1 [Pending] [Tester] - Fill in `tests/test_polygons.py` with full unit tests: `__init__`, `calculate_perimeter`, `calculate_internal_angle` for triangle/square/pentagon/hexagon, and `Shape` inheritance check | DoD: `pytest tests/test_polygons.py` passes with ≥85% coverage of the refactored Polygons module.
+  - [ ] **Validation:** Verify file length < 150 lines. If > 150, trigger refactoring/splitting module.
+- [ ] 4.3.2 [Pending] [Developer] - Run Graphify again after refactoring (`graphify update .`) and save updated graph to `docs/after_state/graph.json` and `docs/after_state/GRAPH_REPORT.md` | DoD: updated graph shows `calc_polygon_details` and `draw_polygon` as methods inside `Polygon`, not as standalone nodes.
+- [ ] 4.3.3 [Pending] [Developer] - Update README.md to reflect Phase 4 completion | DoD: README documents the Polygons refactoring, OOP after-state, and before/after graph comparison.
 
 ---
 
 ## Phase 5: Subagent Beta (Math Quiz Consolidation)
-**Priority:** Medium | **Status:** Pending
-**Definition of Done (DoD):** Math Quiz logic is consolidated into a single file with 85% test coverage.
-
-### 5.1 Math Quiz Remediation Lifecycle
-- [ ] 5.1.1 [Pending] [Architect] - Configure Subagent Beta system prompt for domain isolation | DoD: Prompt forbids interaction with any files outside the Math Quiz community.
-- [ ] 5.1.2 [Pending] [Developer] - Consolidate logic from `mathsquiz-step1.py`, `step2.py`, and `step3.py` into `src/mathsquiz/mathsquiz.py` | DoD: A unified, functional quiz engine is produced.
-  - [ ] **Validation:** Verify file length < 150 lines. If > 150, trigger refactoring/splitting module.
-- [ ] 5.1.3 [Pending] [Developer] - Remove redundant step files and clean up the mathsquiz directory | DoD: Only the consolidated engine and necessary assets remain.
-- [ ] 5.1.4 [Pending] [Tester] - Implement unit tests for Math Quiz in `tests/test_mathsquiz.py` | DoD: Pytest report shows >= 85% coverage for the Math Quiz domain.
-  - [ ] **Validation:** Verify file length < 150 lines. If > 150, trigger refactoring/splitting module.
-- [ ] 5.1.5 [Pending] [Developer] - Update README.md to reflect Phase 5 completion | DoD: README documents the consolidation of quiz logic and the resulting file structure.
-
----
-
-## Phase 6: Bug Analysis, Token-Savings Proof & Knowledge Sync
 **Priority:** High | **Status:** Pending
-**Definition of Done (DoD):** A measured baseline-vs-guided comparison and a full bug-analysis report exist, and the updated graph proves the before/after architecture change.
+**Definition of Done (DoD):** Math Quiz is consolidated into a single OOP `MathQuiz` class, all step files removed, passes Ruff with zero violations, and has ≥85% test coverage.
 
-### 6.1 Investigation Proof & Reporting
-- [ ] 6.1.1 [Pending] [Tester] - Execute the **naive baseline** run (agent/workflow over raw whole-repo files, no graph guidance) and capture: tokens consumed, files/units read, iterations, time-to-root-cause | DoD: baseline metrics logged under `reports/`.
-- [ ] 6.1.2 [Pending] [Tester] - Execute the **graph-guided** run (via `graph.json`, `index.md`, `hot_*.md`) capturing the same four metrics | DoD: guided metrics logged under `reports/`.
-- [ ] 6.1.3 [Pending] [Developer] - Write the **Bug Analysis Report** in `reports/bug_analysis.md` (problem description, root cause, investigation trail, the fix, and how success was verified) for both communities | DoD: report covers the Polygons and Math Quiz fixes.
-- [ ] 6.1.4 [Pending] [Developer] - Compile the **Token Efficiency Report** in `reports/efficiency_report.md` (baseline vs. guided comparison table) | DoD: report confirms > 70% token savings with the four required metrics.
-- [ ] 6.1.5 [Pending] [Architect] - Regenerate the graph (`graphify update src/`) for the after-state proof | DoD: new `graph.json` reflects the OOP structure (procedural/TODO God-Function nodes eliminated).
-- [ ] 6.1.6 [Pending] [Architect] - Document the **before/after knowledge delta** (which Obsidian pages, nodes, links, and insights were added/changed) and final-sync `index.md` + `PRD.md` to "Complete" | DoD: knowledge before/after is explicit in the vault.
+### 5.1 Preparation
+- [ ] 5.1.1 [Pending] [Architect] - Configure Subagent Beta system prompt in `src/hw4/agents/beta_prompt.py` for domain isolation | DoD: prompt explicitly forbids reading any file outside the Math Quiz community; prompt references `hot_mathsquiz.md` as the sole entry point.
+- [ ] 5.1.2 [Pending] [Developer] - Add `if __name__ == "__main__":` guard to `src/broken-python/mathsquiz/mathsquiz.py` to make it safely importable | DoD: `import mathsquiz` does not prompt for input or print to stdout.
+
+### 5.2 Consolidation
+- [ ] 5.2.1 [Pending] [Developer] - Analyse step files (`mathsquiz-step1.py`, `mathsquiz-step2.py`, `mathsquiz-step3.py`) and document the evolution in `reports/mathsquiz_step_analysis.md` | DoD: report explains what each step file adds and confirms the final `mathsquiz.py` supersedes all three.
+- [ ] 5.2.2 [Pending] [Developer] - Fix all bugs in `mathsquiz.py`: replace `print "..."` with `print(...)`, fix `if answer = N` → `if answer == N`, fix `else if` → `elif`, fix score never incrementing, fix wrong answers (55→56, 49→36, 126→72, 668→48, 77→49, 60→66), add missing questions to reach 10, label all as "Question N" not "Question 1" | DoD: running the quiz with correct answers gives a score of 10/10.
+  - [ ] **Validation:** Verify file length < 150 lines. If > 150, trigger refactoring/splitting module.
+- [ ] 5.2.3 [Pending] [Developer] - Refactor `mathsquiz.py` into a `MathQuiz` OOP class with `__init__`, `ask_question`, `check_answer`, `run`, and `display_result` methods | DoD: class instantiates cleanly; no module-level procedural code remains outside `if __name__ == "__main__":`.
+  - [ ] **Validation:** Verify file length < 150 lines. If > 150, trigger refactoring/splitting module.
+- [ ] 5.2.4 [Pending] [Developer] - Run `uv run ruff check src/broken-python/mathsquiz/` and fix all violations | DoD: `ruff check` exits with code 0 for the Math Quiz domain.
+
+### 5.3 Testing
+- [ ] 5.3.1 [Pending] [Tester] - Fill in `tests/test_mathsquiz.py`: implement all skipped stubs (`TestMathQuizInit`, `TestMathQuizAnswerValidation`, `TestMathQuizResult`) plus the 6 already-passing regression tests | DoD: `pytest tests/test_mathsquiz.py` passes with ≥85% coverage of `MathQuiz`.
+  - [ ] **Validation:** Verify file length < 150 lines. If > 150, trigger refactoring/splitting module.
+- [ ] 5.3.2 [Pending] [Developer] - Update README.md to reflect Phase 5 completion | DoD: README documents the Math Quiz consolidation, removed step files, and OOP after-state.
 
 ---
 
-## Phase 7: Original Extension (Assignment §5.6 — Mandatory)
+## Phase 6: Analysis, Reporting & Knowledge Sync
 **Priority:** High | **Status:** Pending
-**Definition of Done (DoD):** At least one original analysis/feature beyond the minimum requirements is implemented and documented.
+**Definition of Done (DoD):** Token efficiency is proven with numbers, bug reports are complete, and the Obsidian vault reflects the after-state.
 
-### 7.1 Original Initiative
-- [ ] 7.1.1 [Pending] [Architect] - Choose and implement ≥1 original extension. Candidates: rank suspect nodes by centrality/proximity to failing tests · generate a dynamic git diff from `graph.json`/`hot.md` · detect orphan nodes and auto-document them · flag mixed-responsibility nodes and propose refactoring · before/after architecture comparison · "impact report" (what breaks if class/function X changes) | DoD: the extension runs and is documented in README.
+### 6.1 Baseline Agent
+- [ ] 6.1.1 [Pending] [Developer] - Build naive baseline in `src/hw4/baseline_agent.py`: agent reads every file in `src/broken-python/` recursively before answering any question | DoD: baseline agent runs end-to-end and its total token usage is logged via `TokenTracker`.
   - [ ] **Validation:** Verify file length < 150 lines. If > 150, trigger refactoring/splitting module.
 
+### 6.2 Token Efficiency Report
+- [ ] 6.2.1 [Pending] [Developer] - Compare guided agent token log vs. baseline log and populate `reports/efficiency_report.md` with a table showing: total tokens in/out, files read, iterations, and % savings for each phase | DoD: report demonstrates >70% token reduction vs. baseline; table is reproducible from `results/token_log.jsonl`.
+
+### 6.3 Bug Analysis Report
+- [ ] 6.3.1 [Pending] [Developer] - Complete `reports/bug_analysis.md` for the Polygons community: list each bug with problem statement, root cause, investigation trail (which graph nodes were traversed), and the fix applied | DoD: covers all 4 Polygons bugs (`Object`, `new`, hardcoded angles, wrong turtle loop).
+- [ ] 6.3.2 [Pending] [Developer] - Complete `reports/bug_analysis.md` for the Math Quiz community: same format as above | DoD: covers all 7 Math Quiz bugs (Python 2 print, assignment in condition, else-if, score not incrementing, 6 wrong answers, wrong question count, duplicate labels).
+
+### 6.4 Knowledge & Graph Sync
+- [ ] 6.4.1 [Pending] [Architect] - Update `obsidian/hot_polygons.md` and `obsidian/hot_mathsquiz.md` to reflect after-state (bugs fixed, OOP classes present) | DoD: Obsidian vault accurately describes the repaired codebase.
+- [ ] 6.4.2 [Pending] [Architect] - Author `obsidian/knowledge_delta.md` documenting what changed between before-state and after-state graphs (nodes added, God Functions eliminated, orphans unchanged) | DoD: file committed and linked from `obsidian/index.md`.
+
 ---
 
-## Phase 8: Final README & Submission Package
+## Phase 7: Original Extension — Orphan Node Detector
 **Priority:** Medium | **Status:** Pending
-**Definition of Done (DoD):** A rich, externally-readable README ties together every deliverable.
+**Definition of Done (DoD):** `OrphanDetector` is implemented, tested, documented, and produces a valid report on the project's own graph.
 
-### 8.1 README & Visuals
-- [ ] 8.1.1 [Pending] [Developer] - Assemble the final README per assignment §8: repo choice + rationale, bug/problem, research questions, extracted architecture, agent workflow, Graphify+Obsidian usage, reverse-engineering walkthrough, root cause + fix, before/after, token efficiency, original extensions, and clear run instructions | DoD: an external reader can follow the full process.
-- [ ] 8.1.2 [Pending] [Developer] - Embed visual elements (screenshots, block schema, OOP schema, flow/Graph diagrams) | DoD: README includes the required diagrams and screenshots.
+### 7.1 Design
+- [ ] 7.1.1 [Pending] [Architect] - Finalise `OrphanNode` dataclass and `OrphanDetector` class interface per `docs/PRD_orphan_detector.md` | DoD: interface approved and matches the PRD acceptance criteria.
+
+### 7.2 Implementation
+- [ ] 7.2.1 [Pending] [Developer] - Implement `OrphanNode` dataclass and `OrphanDetector` class in `src/hw4/extensions/orphan_detector.py` | DoD: `detector.detect()` correctly identifies all nodes with ≤ threshold edges; threshold loaded from `config/setup.json`.
+  - [ ] **Validation:** Verify file length < 150 lines. If > 150, trigger refactoring/splitting module.
+- [ ] 7.2.2 [Pending] [Developer] - Add CLI entry point: `uv run python -m hw4.extensions.orphan_detector --graph obsidian/graph.json --out results/orphan_report.md` | DoD: command produces a valid Markdown report at the specified output path.
+- [ ] 7.2.3 [Pending] [Developer] - Run the detector on `obsidian/graph.json` and commit `results/orphan_report.md` | DoD: report identifies at minimum the 4 known orphans (`Introduction`, `Objectives`, `The Files`, `MIT License`).
+
+### 7.3 Testing & Documentation
+- [ ] 7.3.1 [Pending] [Tester] - Write unit tests in `tests/test_orphan_detector.py`: happy path (known orphans detected), empty graph, threshold=0 (all nodes), threshold=100 (no nodes) | DoD: `pytest tests/test_orphan_detector.py` passes with ≥85% coverage.
+  - [ ] **Validation:** Verify file length < 150 lines. If > 150, trigger refactoring/splitting module.
+- [ ] 7.3.2 [Pending] [Developer] - Update README.md to document the Orphan Node Detector: what it is, how to run it, and what the 4 identified orphans mean for the project's knowledge graph.
+
+---
+
+## Phase 8: Final Documentation & Submission Preparation
+**Priority:** High | **Status:** Pending
+**Definition of Done (DoD):** README is complete, all visual assets exist, all checklist items from the submission guidelines (§17) are satisfied.
+
+### 8.1 README Completion
+- [x] 8.1.1 [Complete] - Project overview and rationale for `martinpeck/broken-python`
+- [x] 8.1.2 [Complete] - Repository structure tree
+- [x] 8.1.3 [Complete] - Run instructions (`uv venv`, `uv sync`, `uv run python main.py`, `uv run pytest`, `uv run ruff check`)
+- [x] 8.1.4 [Complete] - All 8 research questions answered
+- [x] 8.1.5 [Complete] - Architectural block schema (Mermaid)
+- [x] 8.1.6 [Complete] - OOP before/after schema (Mermaid)
+- [x] 8.1.7 [Complete] - Agent workflow diagram (Mermaid)
+- [x] 8.1.8 [Complete] - ADR-001 for LangGraph
+- [ ] 8.1.9 [Pending] - Configuration guide (what each `config/*.json` key does)
+- [ ] 8.1.10 [Pending] - Token efficiency results summary (link to `reports/efficiency_report.md`)
+- [ ] 8.1.11 [Pending] - Orphan Node Detector usage section
+- [ ] 8.1.12 [Pending] - License and attribution section (credit `martinpeck/broken-python`)
+
+### 8.2 Visual Assets
+- [ ] 8.2.1 [Pending] - Screenshot of Obsidian vault after-state (post-refactoring graph) → `assets/obsidian_vault_after.png`
+- [ ] 8.2.2 [Pending] - Screenshot of `pytest --cov` output showing ≥85% coverage → `assets/pytest_coverage.png`
+- [ ] 8.2.3 [Pending] - Screenshot of `ruff check` showing zero violations → `assets/ruff_clean.png`
+
+### 8.3 Final Review Checklist
+- [ ] 8.3.1 [Pending] - Verify all §17 checklist items from `software_submission_guidelines.pdf` are satisfied
+- [ ] 8.3.2 [Pending] - Run full test suite: `uv run pytest --cov=src/hw4 --cov-report=term-missing` | DoD: ≥85% coverage, zero failures
+- [ ] 8.3.3 [Pending] - Run Ruff on entire project: `uv run ruff check src/` | DoD: zero violations
+- [ ] 8.3.4 [Pending] - Verify `docs/prompts_log.md` has entries for every significant AI-assisted prompt used across all phases
+- [ ] 8.3.5 [Pending] - Git-tag final submission: `git tag submission-ready`

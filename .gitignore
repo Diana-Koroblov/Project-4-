@@ -8,3 +8,9 @@ wheels/
 
 # Virtual environments
 .venv
+
+# Secrets — never commit real credentials
+.env
+*.key
+*.pem
+credentials.json

@@ -9,19 +9,25 @@ The **Broken Python** project is a multi-component legacy codebase containing tw
 
 ## 2. Functional Requirements & Orchestration Workflow
 
-### Multi-Agent Sequential Execution Model
-To maintain a clean context window and high signal-to-noise ratio, the orchestration must follow a strict lifecycle:
+### Multi-Agent Sequential Execution Model (Phase Alignment)
+To maintain a clean context window and high signal-to-noise ratio, the orchestration must follow a strict lifecycle aligned with the Master TODO List:
 
-* **Phase 1: Polygons Remediation (Subagent Alpha)**
+* **Phase 4: Subagent Alpha (Polygons Remediation)**
     * **Context:** Master Agent reads `index.md` and routes Subagent Alpha to `hot_polygons.md`.
     * **Task:** Refactor `polygons.py` into a proper Object-Oriented Architecture (encapsulating calculations and drawing inside the `Polygon` class) and fix syntax errors.
     * **Validation:** Run `graphify update .` to capture the new architectural graph (verifying the elimination of procedural "TODO" nodes).
-* **Phase 2: Mandatory Context Reset (Compaction/Subagent Termination)**
-    * **Action:** The Master Agent explicitly terminates Subagent Alpha or performs a complete memory wipe.
+* **Gatekeeper Step: Mandatory Context Reset (Compaction/Subagent Termination)**
+    * **Action:** The Master Agent explicitly terminates Subagent Alpha and triggers the Gatekeeper node for a complete memory wipe.
     * **Purpose:** Ensure zero residual "noise" or vector contamination from the Polygons system persists in the active context window.
-* **Phase 3: Math Quiz Remediation (Subagent Beta)**
+* **Phase 5: Subagent Beta (Math Quiz Remediation)**
     * **Context:** Master Agent spawns a fresh Subagent Beta and routes it to `hot_mathsquiz.md`.
-    * **Task:** Consolidate the fragmented execution flow from `step1`-`step3` into a single, clean `mathsquiz.py` implementation.
+    * **Task:** Consolidate the fragmented execution flow from `step1`-`step3` into a single, clean `src/broken-python/mathsquiz/mathsquiz.py` implementation.
+
+### Architectural Guardrails: "Zero Edge" Domain Isolation
+While the Graph Report may identify high-centrality nodes that bridge the Polygons and Math Quiz communities (e.g., shared utility files or entry points), the orchestration engine MUST enforce artificial "Zero Edge" domain isolation. 
+* Subagent Alpha is strictly forbidden from accessing any Math Quiz nodes.
+* Subagent Beta is strictly forbidden from accessing any Polygons nodes.
+* This isolation prevents context contamination and ensures the agent focuses solely on the relevant community identified in its "Hot Context".
 
 ### Agent Toolset (Guardrails)
 The subagents are restricted to the following surgical tools:

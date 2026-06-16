@@ -1,0 +1,16 @@
+{
+  "openai": {
+    "requests_per_minute": 60,
+    "tokens_per_minute": 90000,
+    "max_retries": 3,
+    "retry_backoff_seconds": 2,
+    "queue_max_size": 100
+  },
+  "anthropic": {
+    "requests_per_minute": 50,
+    "tokens_per_minute": 100000,
+    "max_retries": 3,
+    "retry_backoff_seconds": 2,
+    "queue_max_size": 100
+  }
+}
