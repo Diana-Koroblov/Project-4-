@@ -13,3 +13,13 @@ dependencies = [
     "pytest",
     "pytest-cov",
 ]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+
+[tool.ruff]
+# The vendored before-state source is intentionally broken (Python-2 syntax,
+# NameErrors). Exclude it from project-wide linting; Phases 4.2.4 / 5.2.4 lint
+# the polygons/ and mathsquiz/ subdirs explicitly after each subagent fixes them
+# (Ruff overrides excludes when a path is passed explicitly).
+extend-exclude = ["src/broken-python"]

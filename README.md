@@ -177,6 +177,30 @@ graph LR
 
 The **Gatekeeper** node is the key innovation: it prevents Math Quiz context from contaminating Polygons analysis and vice versa, directly addressing the "Lost in the Middle" problem.
 
+### Orchestration Implementation
+
+The graph is compiled in `main.py` via `build_graph(llm=None)`, which accepts an optional LLM override for testing. The five nodes and their responsibilities:
+
+| Node | File | Responsibility |
+|------|------|----------------|
+| **Router** | `src/hw4/nodes/router.py` | Reads `obsidian/index.md`, seeds `current_phase="polygons"` and zeroes all lists |
+| **SubagentAlpha** | `src/hw4/agents/alpha.py` | Investigates and fixes the Polygons domain (Phase 4) |
+| **Gatekeeper** | `src/hw4/nodes/gatekeeper.py` | Appends `phase:polygons:complete` to `completed_tasks`, issues `RemoveMessage` ops to wipe all Alpha messages, advances `current_phase` to `"mathsquiz"` |
+| **SubagentBeta** | `src/hw4/agents/beta.py` | Consolidates and fixes the Math Quiz domain (Phase 5) |
+
+### AgentState Schema
+
+```python
+class AgentState(TypedDict):
+    current_phase: str                              # "polygons" | "mathsquiz"
+    messages: Annotated[list[BaseMessage], add_messages]  # LangGraph message reducer
+    errors:          list[str]
+    completed_tasks: list[str]
+    token_log:       list[dict]
+```
+
+`messages` uses LangGraph's `add_messages` reducer so nodes can append with `{"messages": [msg]}`. The Gatekeeper clears the list between phases using `RemoveMessage` — the only node that performs a hard context reset.
+
 ## Architectural Decision Record (ADR-001): LangGraph over CrewAI
 
 **Decision:** LangGraph

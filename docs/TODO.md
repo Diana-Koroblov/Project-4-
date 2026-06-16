@@ -57,7 +57,7 @@ Every Python (.py) file created or modified in this project is subject to a 3-st
   - [x] **Validation:** 48 lines — within 150-line limit.
 
 ### 1.4 Before-State Snapshot Lock
-- [ ] 1.4.1 [Pending] [Developer] - Commit and git-tag the current repository state as `before-agent` before any agent-driven code modifications | DoD: `git tag before-agent` exists; `git diff before-agent HEAD` produces a clean, human-readable before/after proof for the submission.
+- [x] 1.4.1 [Complete] [Developer] - Commit and git-tag the current repository state as `before-agent` before any agent-driven code modifications | DoD: `git tag before-agent` exists; `git diff before-agent HEAD` produces a clean, human-readable before/after proof for the submission.
 
 ---
 
@@ -66,21 +66,21 @@ Every Python (.py) file created or modified in this project is subject to a 3-st
 **Definition of Done (DoD):** The StateGraph is defined, nodes are connected, and the sequential execution flow is runnable end-to-end (dry run with mocked LLM passes).
 
 ### 2.1 AgentState Schema
-- [ ] 2.1.1 [Pending] [Architect] - Define the `AgentState` schema using `TypedDict` in `src/state.py` with the following fields: `current_phase` (str), `messages` (list), `errors` (list), `completed_tasks` (list), `token_log` (list) | DoD: schema importable and all fields typed correctly.
-  - [ ] **Validation:** Verify file length < 150 lines. If > 150, trigger refactoring/splitting module.
+- [x] 2.1.1 [Complete] [Architect] - Define the `AgentState` schema using `TypedDict` in `src/hw4/state.py` with the following fields: `current_phase` (str), `messages` (list[BaseMessage] with add_messages reducer), `errors` (list), `completed_tasks` (list), `token_log` (list) | DoD: schema importable and all fields typed correctly.
+  - [x] **Validation:** 9 lines — within 150-line limit.
 
 ### 2.2 Graph Nodes
-- [ ] 2.2.1 [Pending] [Developer] - Implement the **Master Router** node in `src/nodes/router.py`: reads `obsidian/index.md`, sets `current_phase = "polygons"`, initializes empty `messages`, `errors`, `completed_tasks`, and `token_log` | DoD: Router correctly seeds state and routes to Subagent Alpha.
-  - [ ] **Validation:** Verify file length < 150 lines. If > 150, trigger refactoring/splitting module.
-- [ ] 2.2.2 [Pending] [Developer] - Implement the **Gatekeeper** node in `src/nodes/gatekeeper.py`: logs `completed_tasks` from Alpha, purges `messages` list entirely, sets `current_phase = "mathsquiz"` | DoD: after Gatekeeper runs, `messages` is empty and `completed_tasks` is preserved.
-  - [ ] **Validation:** Verify file length < 150 lines. If > 150, trigger refactoring/splitting module.
+- [x] 2.2.1 [Complete] [Developer] - Implement the **Master Router** node in `src/hw4/nodes/router.py`: reads `obsidian/index.md`, sets `current_phase = "polygons"`, initializes empty `messages`, `errors`, `completed_tasks`, and `token_log` | DoD: Router correctly seeds state and routes to Subagent Alpha.
+  - [x] **Validation:** 16 lines — within 150-line limit.
+- [x] 2.2.2 [Complete] [Developer] - Implement the **Gatekeeper** node in `src/hw4/nodes/gatekeeper.py`: logs `completed_tasks` from Alpha, purges `messages` list entirely via RemoveMessage, sets `current_phase = "mathsquiz"` | DoD: after Gatekeeper runs, `messages` is empty and `completed_tasks` is preserved.
+  - [x] **Validation:** 12 lines — within 150-line limit.
 
 ### 2.3 StateGraph Assembly
-- [ ] 2.3.1 [Pending] [Architect] - Compile the `StateGraph` in `main.py` with strict sequential edges: `START → Router → SubagentAlpha → Gatekeeper → SubagentBeta → END` | DoD: graph compiles without errors; `graph.get_graph().draw_mermaid()` matches the planned workflow diagram.
-  - [ ] **Validation:** Verify file length < 150 lines. If > 150, trigger refactoring/splitting module.
-- [ ] 2.3.2 [Pending] [Tester] - Write a dry-run smoke test in `tests/test_graph.py` using a mocked LLM (`FakeListChatModel`) that confirms the graph traverses all 5 nodes in order without errors | DoD: `pytest tests/test_graph.py` passes.
-  - [ ] **Validation:** Verify file length < 150 lines. If > 150, trigger refactoring/splitting module.
-- [ ] 2.3.3 [Pending] [Developer] - Update README.md to reflect Phase 2 completion | DoD: README documents the LangGraph orchestration, Gatekeeper behavior, and includes the workflow Mermaid diagram.
+- [x] 2.3.1 [Complete] [Architect] - Compile the `StateGraph` in `main.py` with strict sequential edges: `START → Router → SubagentAlpha → Gatekeeper → SubagentBeta → END` | DoD: graph compiles without errors; `graph.get_graph().draw_mermaid()` matches the planned workflow diagram.
+  - [x] **Validation:** 45 lines — within 150-line limit.
+- [x] 2.3.2 [Complete] [Tester] - Write a dry-run smoke test in `tests/test_graph.py` using a mocked LLM (`FakeListChatModel`) that confirms the graph traverses all 5 nodes in order without errors | DoD: `pytest tests/test_graph.py` passes (5/5).
+  - [x] **Validation:** 65 lines — within 150-line limit.
+- [x] 2.3.3 [Complete] [Developer] - Updated README.md with LangGraph orchestration table, AgentState schema, and Gatekeeper behavior documentation. Workflow Mermaid diagram already present.
 
 ---
 
@@ -89,12 +89,12 @@ Every Python (.py) file created or modified in this project is subject to a 3-st
 **Definition of Done (DoD):** All surgical tools are implemented, individually unit-tested, and registered with the LangGraph subagent nodes.
 
 ### 3.1 Tool Implementation
-- [ ] 3.1.1 [Pending] [Developer] - Implement `read_obsidian_page(page_name: str) -> str` in `src/tools/obsidian_reader.py`: resolves the page name to `obsidian/{page_name}.md`, reads and returns content, raises `FileNotFoundError` for unknown pages | DoD: tool retrieves hot pages without touching unrelated files.
-  - [ ] **Validation:** Verify file length < 150 lines. If > 150, trigger refactoring/splitting module.
-- [ ] 3.1.2 [Pending] [Developer] - Implement `extract_node_content(node_id: str) -> str` in `src/tools/node_extractor.py`: looks up the node's file path in `obsidian/graph.json` and returns its raw source; raises `ValueError` if the node is not in the graph (refuses directory-wide reads entirely) | DoD: tool resolves any valid graph node to its source in one call.
-  - [ ] **Validation:** Verify file length < 150 lines. If > 150, trigger refactoring/splitting module.
-- [ ] 3.1.3 [Pending] [Developer] - Implement `read_source_file(path: str) -> str` and `write_source_file(path: str, content: str)` in `src/tools/file_io.py`: both enforce that `path` is under `src/broken-python/`; `write_source_file` rejects paths outside the allowed subtree | DoD: read/write work on valid paths; invalid paths raise `PermissionError`.
-  - [ ] **Validation:** Verify file length < 150 lines. If > 150, trigger refactoring/splitting module.
+- [x] 3.1.1 [Complete] [Developer] - Implement `read_obsidian_page(page_name: str) -> str` in `src/hw4/tools/obsidian_reader.py`: resolves the page name to `obsidian/{page_name}.md`, reads and returns content, raises `FileNotFoundError` for unknown pages | DoD: tool retrieves hot pages without touching unrelated files.
+  - [x] **Validation:** Verify file length < 150 lines. If > 150, trigger refactoring/splitting module. (44 lines)
+- [x] 3.1.2 [Complete] [Developer] - Implement `extract_node_content(node_id: str) -> str` in `src/hw4/tools/node_extractor.py`: looks up the node's file path in `obsidian/graph.json` and returns its raw source; raises `ValueError` if the node is not in the graph (refuses directory-wide reads entirely) | DoD: tool resolves any valid graph node to its source in one call.
+  - [x] **Validation:** Verify file length < 150 lines. If > 150, trigger refactoring/splitting module. (58 lines)
+- [x] 3.1.3 [Complete] [Developer] - Implement `read_source_file(path: str) -> str` and `write_source_file(path: str, content: str)` in `src/hw4/tools/file_io.py`: both enforce that `path` is under `src/broken-python/`; `write_source_file` rejects paths outside the allowed subtree | DoD: read/write work on valid paths; invalid paths raise `PermissionError`.
+  - [x] **Validation:** Verify file length < 150 lines. If > 150, trigger refactoring/splitting module. (70 lines)
 - [ ] 3.1.4 [Pending] [Developer] - Implement `TokenTracker` class in `src/tools/token_tracker.py`: wraps LLM calls and records `{phase, node, tokens_in, tokens_out, files_read}` per call; exposes `get_summary()` returning a dict of totals and a `save_log(path)` method | DoD: every LLM interaction is logged with all four required metrics.
   - [ ] **Validation:** Verify file length < 150 lines. If > 150, trigger refactoring/splitting module.
 
