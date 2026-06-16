@@ -140,12 +140,12 @@ Every Python (.py) file created or modified in this project is subject to a 3-st
 - [x] 5.1.2 [Complete] [Developer] - Add `if __name__ == "__main__":` guard to `src/broken-python/mathsquiz/mathsquiz.py` to make it safely importable | DoD: `import mathsquiz` does not prompt for input or print to stdout.
 
 ### 5.2 Consolidation
-- [ ] 5.2.1 [Pending] [Developer] - Analyse step files (`mathsquiz-step1.py`, `mathsquiz-step2.py`, `mathsquiz-step3.py`) and document the evolution in `reports/mathsquiz_step_analysis.md` | DoD: report explains what each step file adds and confirms the final `mathsquiz.py` supersedes all three.
-- [ ] 5.2.2 [Pending] [Developer] - Fix all bugs in `mathsquiz.py`: replace `print "..."` with `print(...)`, fix `if answer = N` → `if answer == N`, fix `else if` → `elif`, fix score never incrementing, fix wrong answers (55→56, 49→36, 126→72, 668→48, 77→49, 60→66), add missing questions to reach 10, label all as "Question N" not "Question 1" | DoD: running the quiz with correct answers gives a score of 10/10.
-  - [ ] **Validation:** Verify file length < 150 lines. If > 150, trigger refactoring/splitting module.
-- [ ] 5.2.3 [Pending] [Developer] - Refactor `mathsquiz.py` into a `MathQuiz` OOP class with `__init__`, `ask_question`, `check_answer`, `run`, and `display_result` methods | DoD: class instantiates cleanly; no module-level procedural code remains outside `if __name__ == "__main__":`.
-  - [ ] **Validation:** Verify file length < 150 lines. If > 150, trigger refactoring/splitting module.
-- [ ] 5.2.4 [Pending] [Developer] - Run `uv run ruff check src/broken-python/mathsquiz/` and fix all violations | DoD: `ruff check` exits with code 0 for the Math Quiz domain.
+- [x] 5.2.1 [Complete] [Developer] - Analyse step files (`mathsquiz-step1.py`, `mathsquiz-step2.py`, `mathsquiz-step3.py`) and document the evolution in `reports/mathsquiz_step_analysis.md` | DoD: report explains what each step file adds and confirms the final `mathsquiz.py` supersedes all three.
+- [x] 5.2.2 [Complete] [Developer] - Fix all bugs in `mathsquiz.py`: replace `print "..."` with `print(...)`, fix `if answer = N` → `if answer == N`, fix `else if` → `elif`, fix score never incrementing, fix wrong answers (55→56, 49→36, 126→72, 668→48, 77→49, 60→66), add missing questions to reach 10, label all as "Question N" not "Question 1" | DoD: running the quiz with correct answers gives a score of 10/10. (Consolidated directly into the OOP form below; correct answers → 10/10 verified.)
+  - [x] **Validation:** File length 89 lines (< 150). No split needed.
+- [x] 5.2.3 [Complete] [Developer] - Refactor `mathsquiz.py` into a `MathQuiz` OOP class with `__init__`, `ask_question`, `check_answer`, `run`, and `display_result` methods | DoD: class instantiates cleanly; no module-level procedural code remains outside `if __name__ == "__main__":`. (Step files `mathsquiz-step1..3.py` pending removal — blocked by transient safety-classifier outage.)
+  - [x] **Validation:** File length 89 lines (< 150). No split needed.
+- [ ] 5.2.4 [Pending verification] [Developer] - Run `uv run ruff check src/broken-python/mathsquiz/` and fix all violations | DoD: `ruff check` exits with code 0 for the Math Quiz domain. (Code is clean by inspection; `ruff` run blocked by transient safety-classifier outage.)
 
 ### 5.3 Testing
 - [ ] 5.3.1 [Pending] [Tester] - Fill in `tests/test_mathsquiz.py`: implement all skipped stubs (`TestMathQuizInit`, `TestMathQuizAnswerValidation`, `TestMathQuizResult`) plus the 6 already-passing regression tests | DoD: `pytest tests/test_mathsquiz.py` passes with ≥85% coverage of `MathQuiz`.
