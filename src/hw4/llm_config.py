@@ -1,7 +1,7 @@
 """LLM provider configuration.
 
-Loads the Anthropic API key from .env and returns a configured
-ChatAnthropic instance. Model name and parameters are read from
+Loads the Groq API key from .env and returns a configured
+ChatGroq instance. Model name and parameters are read from
 config/setup.json — nothing is hardcoded here.
 """
 
@@ -10,7 +10,7 @@ import os
 from pathlib import Path
 
 from dotenv import load_dotenv
-from langchain_anthropic import ChatAnthropic
+from langchain_groq import ChatGroq
 
 from hw4.constants import CONFIG_SETUP_PATH
 
@@ -24,28 +24,28 @@ def _load_config() -> dict:
         return json.load(f)["llm"]
 
 
-def get_llm() -> ChatAnthropic:
-    """Return a configured ChatAnthropic instance.
+def get_llm() -> ChatGroq:
+    """Return a configured ChatGroq instance.
 
-    Reads ANTHROPIC_API_KEY from the .env file.
+    Reads GROQ_API_KEY from the .env file.
     Reads model, temperature, and max_tokens from config/setup.json.
 
     Raises:
-        EnvironmentError: If ANTHROPIC_API_KEY is not set.
+        EnvironmentError: If GROQ_API_KEY is not set.
         FileNotFoundError: If config/setup.json is missing.
     """
     load_dotenv()
 
-    api_key = os.getenv("ANTHROPIC_API_KEY")
+    api_key = os.getenv("GROQ_API_KEY")
     if not api_key:
         raise EnvironmentError(
-            "ANTHROPIC_API_KEY is not set. "
+            "GROQ_API_KEY is not set. "
             "Copy .env-example to .env and add your key."
         )
 
     cfg = _load_config()
 
-    return ChatAnthropic(
+    return ChatGroq(
         api_key=api_key,
         model=cfg["model"],
         temperature=cfg["temperature"],

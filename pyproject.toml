@@ -7,7 +7,7 @@ requires-python = ">=3.12"
 dependencies = [
     "langgraph",
     "langchain-core",
-    "langchain-anthropic",
+    "langchain-groq",
     "python-dotenv",
     "ruff",
     "pytest",

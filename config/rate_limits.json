@@ -6,9 +6,9 @@
     "retry_backoff_seconds": 2,
     "queue_max_size": 100
   },
-  "anthropic": {
-    "requests_per_minute": 50,
-    "tokens_per_minute": 100000,
+  "groq": {
+    "requests_per_minute": 30,
+    "tokens_per_minute": 6000,
     "max_retries": 3,
     "retry_backoff_seconds": 2,
     "queue_max_size": 100

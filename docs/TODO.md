@@ -51,9 +51,9 @@ Every Python (.py) file created or modified in this project is subject to a 3-st
 - [x] 1.2.5 [Complete] [Developer] - Create `docs/prompts_log.md` (Prompts Engineering Log per §8.3) | DoD: file exists with initial entries and template for all phases.
 
 ### 1.3 LLM Provider Configuration
-- [x] 1.3.1 [Complete] [Developer] - Selected Anthropic (Claude) as LLM provider; added `langchain-anthropic` and `python-dotenv` to `pyproject.toml` | DoD: dependencies added; run `uv sync` to update `uv.lock`.
-- [ ] 1.3.2 [Pending] [Developer] - Create `.env` locally (gitignored) with `ANTHROPIC_API_KEY=<your-key>` | DoD: `.env` present locally; `get_llm()` in `src/hw4/llm_config.py` loads without error.
-- [x] 1.3.3 [Complete] [Developer] - Created `src/hw4/llm_config.py` with `get_llm()` that loads API key from `.env` via `python-dotenv` and returns a `ChatAnthropic` instance; model/temperature/max_tokens read from `config/setup.json` | DoD: module is importable, raises `EnvironmentError` if key is missing.
+- [x] 1.3.1 [Complete] [Developer] - Selected Groq as LLM provider; added `langchain-groq` and `python-dotenv` to `pyproject.toml` | DoD: dependencies added; run `uv sync` to update `uv.lock`.
+- [ ] 1.3.2 [Pending] [Developer] - Create `.env` locally (gitignored) with `GROQ_API_KEY=<your-key>` | DoD: `.env` present locally; `get_llm()` in `src/hw4/llm_config.py` loads without error.
+- [x] 1.3.3 [Complete] [Developer] - Created `src/hw4/llm_config.py` with `get_llm()` that loads API key from `.env` via `python-dotenv` and returns a `ChatGroq` instance; model/temperature/max_tokens read from `config/setup.json` | DoD: module is importable, raises `EnvironmentError` if key is missing.
   - [x] **Validation:** 48 lines — within 150-line limit.
 
 ### 1.4 Before-State Snapshot Lock
