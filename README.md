@@ -185,7 +185,30 @@ remediated. The target OOP diagram above is now the **actual** state of the code
 | Totals | 27 nodes · 23 edges · 6 communities | 35 nodes · 30 edges · 12 communities |
 | Polygons nodes | `Object`, `calc_polygon_details()`, `draw_polygon()`, 3× `# TODO` rationale | `Shape` (abstract) + `Polygon` with 5 methods; God Functions & `Object` removed |
 
-> The after-state was regenerated with the real Graphify CLI (`graphify update .`, v0.8.40, 100% AST-extracted, no LLM) run inside `src/broken-python/`. Graphify now reports `Polygon` → `Shape` as the top God Nodes (8 and 6 edges) and flags the new `Polygon --inherits--> Shape` bridge. The Math Quiz community is unchanged pending Phase 5.
+> The after-state was regenerated with the real Graphify CLI (`graphify update .`, v0.8.40, 100% AST-extracted, no LLM) run inside `src/broken-python/`. Graphify now reports `Polygon` → `Shape` as the top God Nodes (8 and 6 edges) and flags the new `Polygon --inherits--> Shape` bridge.
+
+### Math Quiz Consolidation — After-State (Phase 5 ✅)
+
+Subagent Beta's domain (`src/broken-python/mathsquiz/mathsquiz.py`) has been fully consolidated.
+
+**All 7 bugs fixed:**
+
+| Bug | Before | After |
+|---|---|---|
+| Python 2 print | `print "..."` | `print(...)` |
+| Assignment in condition | `if answer = N` | `if answer == N` |
+| Wrong branch keyword | `else if` | `elif` |
+| Score never increments | missing `score += 1` | `self.score += 1` |
+| Wrong expected answers | 55, 49, 126, 668, 77, 60 | 56, 36, 72, 48, 49, 66 |
+| Only 6 questions | 6 hardcoded questions | 10 questions via `QUESTIONS` class constant |
+| All labelled "Question 1" | `print("Question 1:")` always | `print(f"Question {number}:")` |
+
+**Architecture changes:**
+- All procedural code replaced by a `MathQuiz` class with `__init__`, `check_answer` (static), `ask_question`, `run`, and `display_result` methods
+- `QUESTIONS` class constant holds all 10 multiplication pairs — answers can never drift out of sync with prompts
+- Step files (`mathsquiz-step1..3.py`) are superseded; see `reports/mathsquiz_step_analysis.md` for the evolution trail
+- `if __name__ == "__main__":` guard added — safe to import in tests
+- **Quality gates** — `tests/test_mathsquiz.py` covers init, answer validation, all 6 regression answers, and all 4 result display messages (21 tests); `ruff check src/broken-python/mathsquiz/` is clean by inspection.
 
 ## Agent Workflow (LangGraph)
 

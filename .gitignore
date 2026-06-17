@@ -14,3 +14,7 @@ wheels/
 *.key
 *.pem
 credentials.json
+
+# Local config override — each developer has their own
+# Copy config/setup.example.json → config/setup.json and edit locally
+config/setup.json

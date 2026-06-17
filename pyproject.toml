@@ -8,6 +8,7 @@ dependencies = [
     "langgraph",
     "langchain-core",
     "langchain-groq",
+    "langchain-google-genai",
     "python-dotenv",
     "ruff",
     "pytest",
@@ -18,14 +19,9 @@ dependencies = [
 pythonpath = ["src"]
 
 [tool.coverage.report]
-# The interactive CLI block is exercised by hand, not unit tests.
 exclude_also = ["if __name__ == .__main__.:"]
 
 [tool.ruff]
-# The vendored before-state source is intentionally broken (Python-2 syntax,
-# NameErrors). Exclude it from project-wide linting; Phases 4.2.4 / 5.2.4 lint
-# the polygons/ and mathsquiz/ subdirs explicitly after each subagent fixes them
-# (Ruff overrides excludes when a path is passed explicitly).
 extend-exclude = ["src/broken-python"]
 
 [dependency-groups]
