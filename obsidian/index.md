@@ -14,3 +14,6 @@ Welcome to the project's knowledge space. This repository contains two independe
 
 #### Graphic Mapping
 * [[GRAPH_REPORT]] - The automatically generated report that maps the entire system.
+
+#### Before / After (post-refactoring)
+* [[knowledge_delta]] - What changed between the before-state and after-state graphs (God Functions eliminated, OOP nodes added, orphans unchanged).

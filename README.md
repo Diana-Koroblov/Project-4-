@@ -28,6 +28,9 @@ hw_4/
 │   ├── graph.json           # Graphify dependency graph
 │   └── GRAPH_REPORT.md      # Auto-generated graph analysis report
 ├── src/
+│   ├── hw4/                 # LangGraph agent package
+│   │   └── extensions/
+│   │       └── orphan_detector.py  # Phase 7 extension: orphan node detector + CLI
 │   └── broken-python/       # Vendored source — immutable before-state snapshot
 │       ├── polygons/
 │       │   └── polygons.py
@@ -38,10 +41,14 @@ hw_4/
 │           └── mathsquiz-step3.py
 ├── tests/                   # Unit tests (target: ≥85% coverage)
 │   ├── test_polygons.py
-│   └── test_mathsquiz.py
+│   ├── test_mathsquiz.py
+│   └── test_orphan_detector.py  # Phase 7 extension tests (100% coverage)
 ├── reports/                 # Analysis and efficiency reports
 │   ├── bug_analysis.md
 │   └── efficiency_report.md
+├── results/                 # Generated artifacts
+│   ├── token_log.jsonl
+│   └── orphan_report.md     # Phase 7 orphan node report
 ├── TODO.md                  # Master task list
 ├── pyproject.toml
 └── main.py                  # LangGraph orchestration entry point
@@ -263,6 +270,33 @@ The subagents act through a small set of **surgical, sandboxed tools** (`src/hw4
 | **write_source_file** | `write_source_file(path: str, content: str) -> None` | Same `src/broken-python/` sandbox; the only sanctioned way to mutate vendored source |
 
 `TokenTracker` (`token_tracker.py`) is the supporting instrumentation: it records `{phase, node, tokens_in, tokens_out, files_read}` per LLM call, exposes `get_summary()` (totals), and `save_log(path)` (JSON Lines → `results/token_log.jsonl`) — the raw data behind the Phase 6 token-efficiency proof.
+
+## Original Extension — Orphan Node Detector (Phase 7)
+
+**What it is.** [`src/hw4/extensions/orphan_detector.py`](src/hw4/extensions/orphan_detector.py) is the project's original extension. It scans a Graphify `graph.json` (read-only — it never mutates the graph) and reports every node whose edge count is `≤ threshold`. These are **orphans**: nodes a graph-guided agent cannot navigate to or from, signalling dead documentation, stub code, or poorly cross-referenced files. Each orphan is classified `isolated` (0 edges) or `weakly_connected` (1..threshold edges). The degree of every node is computed in a single pass over the edges, so detection is linear in nodes + edges.
+
+**Configuration, not hardcoding.** The threshold is read from `config/setup.json` at `extensions.orphan_detector.max_edge_threshold` (falling back to the committed `config/setup.example.json`, where it is `1`). Pass `--threshold` (or `OrphanDetector(graph_path, threshold=...)`) to override it.
+
+**How to run.**
+```bash
+# The project uses a src/ layout, so put src on the import path (the repo
+# already configures pythonpath=["src"] for pytest). bash:
+PYTHONPATH=src uv run python -m hw4.extensions.orphan_detector \
+  --graph obsidian/graph.json --out results/orphan_report.md
+# PowerShell:  $env:PYTHONPATH="src"; uv run python -m hw4.extensions.orphan_detector --graph obsidian/graph.json --out results/orphan_report.md
+```
+This writes [`results/orphan_report.md`](results/orphan_report.md). Run it on `obsidian/graph.json` (27 nodes, threshold ≤ 1) and it flags **19** poorly-connected nodes.
+
+**What the 4 known orphans mean.** Beyond leaf method/comment nodes, the report surfaces the four documentation orphans called out in `GRAPH_REPORT.md`:
+
+| Orphan | File | Why it's orphaned |
+|--------|------|-------------------|
+| `Introduction` | `mathsquiz/README.md` | A prose heading with one parent link and no outward references |
+| `Objectives` | `mathsquiz/README.md` | Same — documentation prose the agent can't "follow the graph" into |
+| `The Files` | `mathsquiz/README.md` | Same |
+| `MIT License` | `LICENSE.txt` | Reachable only via a single (originally inferred) reference edge |
+
+These are pure documentation/legal stubs with no code cross-references, so they are invisible to a graph-guided agent unless named explicitly — exactly the dead-weight the detector is built to flag before an investigation begins. They persist unchanged from the before-state to the after-state graph (see [`obsidian/knowledge_delta.md`](obsidian/knowledge_delta.md)).
 
 ## Logging & Debugging
 

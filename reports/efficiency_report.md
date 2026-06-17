@@ -11,7 +11,7 @@ the Obsidian/Graphify map and reads only an entry page plus the **single**
 targeted source file for the community under investigation. This report proves
 the resulting token savings with measured numbers.
 
-> **Headline result: 71.2% reduction in input (context) tokens** — above the
+> **Headline result: 70.9% reduction in input (context) tokens** — above the
 > §5.4 KPI of >70% — achieved while reading **5 file-loads instead of 18**.
 
 ## Methodology & Reproducibility
@@ -43,14 +43,14 @@ the resulting token savings with measured numbers.
 | Phase | Mode | Tokens in | Tokens out | Total |
 |-------|------|----------:|-----------:|------:|
 | Polygons | Baseline | 3,792 | 445 | 4,237 |
-| Polygons | **Guided** | **1,074** | 445 | **1,519** |
+| Polygons | **Guided** | **1,070** | 445 | **1,515** |
 | Math Quiz | Baseline | 3,792 | 801 | 4,593 |
-| Math Quiz | **Guided** | **1,113** | 801 | **1,914** |
+| Math Quiz | **Guided** | **1,137** | 801 | **1,938** |
 | **TOTAL** | Baseline | **7,584** | 1,246 | **8,830** |
-| **TOTAL** | **Guided** | **2,187** | 1,246 | **3,433** |
+| **TOTAL** | **Guided** | **2,207** | 1,246 | **3,453** |
 
-- **Input-token reduction: 71.2%** (7,584 → 2,187) — Polygons 71.7%, Math Quiz 70.6%.
-- **Total-token reduction: 61.1%** (8,830 → 3,433) — lower only because the
+- **Input-token reduction: 70.9%** (7,584 → 2,207) — Polygons 71.8%, Math Quiz 70.0%.
+- **Total-token reduction: 60.9%** (8,830 → 3,453) — lower only because the
   identical emitted fix (output) is counted in both modes; the input figure is
   the meaningful efficiency metric.
 
@@ -87,7 +87,7 @@ padded with ~8× irrelevant material.
 
 ## Conclusion
 
-The graph-guided, community-isolated strategy cuts **input tokens by 71.2%** and
+The graph-guided, community-isolated strategy cuts **input tokens by 70.9%** and
 **file-loads by 72.2%** versus the naive whole-repo read, while improving
 root-cause localisation (one targeted file per phase vs. nine) and eliminating
 cross-domain contamination. The >70% KPI is met and is reproducible from
@@ -96,5 +96,5 @@ cross-domain contamination. The >70% KPI is met and is reproducible from
 *Note:* the guided figure includes the Obsidian navigation overhead (the
 `index.md` / `hot_*.md` pages). Counting source code alone, the guided agent
 reads ~70 lines per phase vs. the full tree — an even larger reduction — but the
-honest end-to-end figure that includes navigation context is the 71.2% reported
+honest end-to-end figure that includes navigation context is the 70.9% reported
 here.

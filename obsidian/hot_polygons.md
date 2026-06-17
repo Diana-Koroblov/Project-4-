@@ -1,20 +1,19 @@
-# Hot Context - Polygons System Investigation
+# Hot Context — Polygons System (After-State ✅ RESOLVED)
 
-**Supervisory Directive for AI Agent:**
-This investigation focuses SOLELY on the `polygons/` component. **DO NOT** attempt to read, parse, or interact with any files in the `mathsquiz/` directory during this phase.
+**Status:** Refactored and verified — this page describes the *repaired* codebase.
+**Domain isolation:** still scoped SOLELY to `polygons/`; do not touch `mathsquiz/`.
 
-**Main Suspects (Relevant Files):**
-* `polygons.py`
+**File:** [`polygons.py`](../src/broken-python/polygons/polygons.py)
 
-**Problem Description:**
-The Polygons system suffers from syntax errors, architectural debt, and severe OOP violations:
-1. **Syntax Errors:** Incorrect inheritance (`Object` instead of `object`) and Java-style instantiation (`new Polygon`).
-2. **OOP Violations:** Procedural code acting as a "God Function". `calc_polygon_details` and `draw_polygon` are isolated outside the `Polygon` class, completely ignoring state encapsulation.
-3. **Hardcoded Logic:** Angle calculations are hardcoded only for 3 and 4 sides, failing for any generic polygon.
-4. **Broken Dynamic Drawing:** The turtle loop is fixed to `range(0, 6)` with a `60` degree angle, forcing it to draw a hexagon regardless of user input.
+**Architecture now (OOP):**
+* `Shape(ABC)` — abstract base declaring `draw()` + `calculate_perimeter()`.
+* `Polygon(Shape)` — encapsulates state (`sides`, `length`) and all behaviour as methods: `calculate_internal_angle()`, `calculate_internal_angles_sum()`, `calculate_perimeter()`, `draw()`.
+* No module-level "God Functions" remain (`calc_polygon_details`/`draw_polygon` are gone); runnable code lives only under `if __name__ == "__main__"`.
 
-**Refactoring Objectives:**
-* Fix all syntax and compilation errors.
-* Refactor the system into a proper Object-Oriented architecture: encapsulate calculation and drawing methods inside the `Polygon` class.
-* Implement dynamic mathematical calculations for any number of sides.
-* Ensure zero cross-contamination with the Math Quiz system.
+**Bugs fixed (4):**
+1. `Object` base class → inherits real `Shape(ABC)` (no undefined `Object`).
+2. `new Polygon(...)` → idiomatic `Polygon(...)`.
+3. Hardcoded angle table → formula `(n-2)*180/n` (3→60, 4→90, 5→108, 6→120).
+4. Turtle loop hardcoded to a hexagon → `range(self.sides)` turning `360/self.sides`.
+
+**Full trail:** [Bug Analysis](../reports/bug_analysis.md) · graph delta: [[knowledge_delta]].
