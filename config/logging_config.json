@@ -5,8 +5,8 @@
     "standard": {
       "format": "%(asctime)s [%(levelname)s] %(name)s: %(message)s"
     },
-    "json": {
-      "format": "%(asctime)s %(levelname)s %(name)s %(message)s"
+    "detailed": {
+      "format": "%(asctime)s [%(levelname)s] %(name)s %(module)s:%(lineno)d: %(message)s"
     }
   },
   "handlers": {
@@ -16,14 +16,24 @@
       "level": "INFO"
     },
     "file": {
-      "class": "logging.FileHandler",
+      "class": "logging.handlers.RotatingFileHandler",
       "filename": "results/agent.log",
-      "formatter": "json",
-      "level": "DEBUG"
+      "formatter": "detailed",
+      "level": "DEBUG",
+      "maxBytes": 1048576,
+      "backupCount": 3,
+      "encoding": "utf-8"
+    }
+  },
+  "loggers": {
+    "hw4": {
+      "handlers": ["console", "file"],
+      "level": "DEBUG",
+      "propagate": false
     }
   },
   "root": {
-    "handlers": ["console", "file"],
-    "level": "DEBUG"
+    "handlers": ["console"],
+    "level": "WARNING"
   }
 }

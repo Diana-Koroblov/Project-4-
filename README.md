@@ -264,6 +264,25 @@ The subagents act through a small set of **surgical, sandboxed tools** (`src/hw4
 
 `TokenTracker` (`token_tracker.py`) is the supporting instrumentation: it records `{phase, node, tokens_in, tokens_out, files_read}` per LLM call, exposes `get_summary()` (totals), and `save_log(path)` (JSON Lines → `results/token_log.jsonl`) — the raw data behind the Phase 6 token-efficiency proof.
 
+## Logging & Debugging
+
+Every real Groq API call leaves an audit trail for post-mortem debugging — essential when a call fails with a rate limit, auth error, or timeout. Two pieces in [`src/hw4/logging_setup.py`](src/hw4/logging_setup.py):
+
+| Piece | Responsibility |
+|-------|----------------|
+| `configure_logging()` | Loads [`config/logging_config.json`](config/logging_config.json) via `dictConfig` — a **rotating** file handler (`results/agent.log`, 1 MB × 3 backups, DEBUG) plus an INFO console handler. Idempotent; falls back to a basic file+console config if the JSON is missing/invalid so errors are never silently lost. |
+| `GroqLoggingCallback` | A LangChain callback attached automatically by `get_llm()`. Logs each call's **start** (model, message count), **success** (latency + token usage), and **failure** (`exc_info` traceback at ERROR). Prompt previews go to the file at DEBUG. |
+
+Logs are written to `results/agent.log` (gitignored — regenerated per run):
+
+```text
+… [INFO]  hw4.llm logging_setup:118: LLM start | model=llama-3.3-70b-versatile | messages=1 | run=…
+… [DEBUG] hw4.llm logging_setup:122: LLM prompt preview: Fix the Polygons bug
+… [ERROR] hw4.llm logging_setup:138: LLM FAILED | run=… | elapsed=0.412s | RuntimeError: 429 Too Many Requests…
+```
+
+The console shows INFO and above; the file captures full DEBUG detail. Adjust levels/handlers in `config/logging_config.json` — no code edits required.
+
 ## Architectural Decision Record (ADR-001): LangGraph over CrewAI
 
 **Decision:** LangGraph

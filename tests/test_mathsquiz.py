@@ -9,8 +9,6 @@ import sys
 from pathlib import Path
 from unittest.mock import patch
 
-import pytest
-
 _MATHSQUIZ_DIR = (
     Path(__file__).resolve().parents[1] / "src" / "broken-python" / "mathsquiz"
 )

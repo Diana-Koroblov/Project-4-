@@ -1,18 +1,18 @@
 """LLM provider configuration.
 
 Reads provider, model, and parameters from config/setup.json.
-Reads the API key from .env. Supports: groq, gemini.
-Nothing is hardcoded — swap providers by editing setup.json only.
+Reads the API key from .env. Provider: groq.
+Nothing is hardcoded — tune model/params by editing setup.json only.
 """
 
 import json
 import os
 from pathlib import Path
-from typing import Union
 
 from dotenv import load_dotenv
 
 from hw4.constants import CONFIG_SETUP_PATH
+from hw4.logging_setup import GroqLoggingCallback, configure_logging
 
 
 def _load_config() -> dict:
@@ -27,51 +27,39 @@ def _load_config() -> dict:
         return json.load(f)["llm"]
 
 
-def get_llm() -> Union["ChatGroq", "ChatGoogleGenerativeAI"]:  # noqa: F821
-    """Return a configured LLM instance based on config/setup.json.
-
-    Supported providers: groq, gemini.
+def get_llm() -> "ChatGroq":  # noqa: F821
+    """Return a configured Groq LLM instance based on config/setup.json.
 
     Raises:
-        EnvironmentError: If the required API key is not set.
+        EnvironmentError: If GROQ_API_KEY is not set.
         FileNotFoundError: If config/setup.json is missing.
-        ValueError: If the provider in setup.json is not supported.
+        ValueError: If the provider in setup.json is not 'groq'.
     """
+    logger = configure_logging()
     load_dotenv()
     cfg = _load_config()
     provider = cfg["provider"]
 
-    if provider == "groq":
-        from langchain_groq import ChatGroq
-
-        api_key = os.getenv("GROQ_API_KEY")
-        if not api_key:
-            raise EnvironmentError(
-                "GROQ_API_KEY is not set. Add it to your .env file."
-            )
-        return ChatGroq(
-            api_key=api_key,
-            model=cfg["model"],
-            temperature=cfg["temperature"],
-            max_tokens=cfg["max_tokens"],
+    if provider != "groq":
+        logger.error("Unsupported provider in config/setup.json: %r", provider)
+        raise ValueError(
+            f"Unsupported provider: '{provider}'. "
+            "Only 'groq' is supported; set provider='groq' in config/setup.json."
         )
 
-    if provider == "gemini":
-        from langchain_google_genai import ChatGoogleGenerativeAI
+    from langchain_groq import ChatGroq
 
-        api_key = os.getenv("GEMINI_API_KEY")
-        if not api_key:
-            raise EnvironmentError(
-                "GEMINI_API_KEY is not set. Add it to your .env file."
-            )
-        return ChatGoogleGenerativeAI(
-            google_api_key=api_key,
-            model=cfg["model"],
-            temperature=cfg["temperature"],
-            max_output_tokens=cfg["max_tokens"],
-        )
+    api_key = os.getenv("GROQ_API_KEY")
+    if not api_key:
+        logger.error("GROQ_API_KEY is not set; cannot create the Groq LLM.")
+        raise EnvironmentError("GROQ_API_KEY is not set. Add it to your .env file.")
 
-    raise ValueError(
-        f"Unsupported provider: '{provider}'. "
-        "Choose 'groq' or 'gemini' in config/setup.json."
+    logger.info("Creating Groq LLM | model=%s", cfg["model"])
+    return ChatGroq(
+        api_key=api_key,
+        model=cfg["model"],
+        temperature=cfg["temperature"],
+        max_tokens=cfg["max_tokens"],
+        # Attach the audit callback so every API call is logged to results/agent.log.
+        callbacks=[GroqLoggingCallback()],
     )

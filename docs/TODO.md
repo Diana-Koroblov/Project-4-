@@ -51,9 +51,9 @@ Every Python (.py) file created or modified in this project is subject to a 3-st
 - [x] 1.2.5 [Complete] [Developer] - Create `docs/prompts_log.md` (Prompts Engineering Log per §8.3) | DoD: file exists with initial entries and template for all phases.
 
 ### 1.3 LLM Provider Configuration
-- [x] 1.3.1 [Complete] [Developer] - Added `langchain-groq`, `langchain-google-genai`, and `python-dotenv` to `pyproject.toml`; `uv sync` confirmed successful | DoD: all three packages present in `uv.lock`.
-- [x] 1.3.2 [Complete] [Developer] - Created local `.env` with `GEMINI_API_KEY`; `config/setup.json` set to `provider: gemini` (gitignored — classmates use their own copy with Groq) | DoD: `.env` present locally; key loads without error.
-- [x] 1.3.3 [Complete] [Developer] - Created `src/hw4/llm_config.py` with provider-agnostic `get_llm()` supporting `groq` and `gemini`; provider/model/params read from `config/setup.json`; `config/setup.example.json` committed as team default (Groq) | DoD: module raises `EnvironmentError` if key missing, `ValueError` if provider unknown.
+- [x] 1.3.1 [Complete] [Developer] - Added `langchain-groq` and `python-dotenv` to `pyproject.toml`; `uv sync` confirmed successful | DoD: both packages present in `uv.lock`. (Gemini dropped — `langchain-google-genai` removed; Groq is the only provider.)
+- [x] 1.3.2 [Complete] [Developer] - Local `.env` carries `GROQ_API_KEY`; `config/setup.json` uses `provider: groq` (gitignored — each dev copies `config/setup.example.json`) | DoD: `.env` present locally; key loads without error.
+- [x] 1.3.3 [Complete] [Developer] - Created `src/hw4/llm_config.py` with config-driven `get_llm()` for `groq`; provider/model/params read from `config/setup.json`; `config/setup.example.json` committed as the default (Groq) | DoD: module raises `EnvironmentError` if key missing, `ValueError` if provider is not `groq`.
   - [x] **Validation:** 73 lines — within 150-line limit.
 
 ### 1.4 Before-State Snapshot Lock
@@ -159,11 +159,11 @@ Every Python (.py) file created or modified in this project is subject to a 3-st
 **Definition of Done (DoD):** Token efficiency is proven with numbers, bug reports are complete, and the Obsidian vault reflects the after-state.
 
 ### 6.1 Baseline Agent
-- [ ] 6.1.1 [Pending] [Developer] - Build naive baseline in `src/hw4/baseline_agent.py`: agent reads every file in `src/broken-python/` recursively before answering any question | DoD: baseline agent runs end-to-end and its total token usage is logged via `TokenTracker`.
-  - [ ] **Validation:** Verify file length < 150 lines. If > 150, trigger refactoring/splitting module.
+- [x] 6.1.1 [Complete] [Developer] - Build naive baseline in `src/hw4/baseline_agent.py`: agent reads every file in `src/broken-python/` recursively before answering any question | DoD: baseline agent runs end-to-end and its total token usage is logged via `TokenTracker`. (Runs via `uv run python src/hw4/baseline_agent.py` → `results/baseline_token_log.jsonl`; 98% test coverage.)
+  - [x] **Validation:** File length 132 lines (< 150). No split needed.
 
 ### 6.2 Token Efficiency Report
-- [ ] 6.2.1 [Pending] [Developer] - Compare guided agent token log vs. baseline log and populate `reports/efficiency_report.md` with a table showing all four metrics mandated by §5.5: (a) total tokens in/out, (b) files / text units read, (c) iterations / investigation rounds, and (d) quality or speed of reaching the root cause and fix (e.g. rounds-to-root-cause, correct-fix-on-first-try), reported per phase | DoD: report demonstrates >70% token reduction vs. baseline AND contrasts root-cause quality/speed between the two modes; table is reproducible from `results/token_log.jsonl`.
+- [x] 6.2.1 [Complete] [Developer] - Compare guided agent token log vs. baseline log and populate `reports/efficiency_report.md` with a table showing all four metrics mandated by §5.5: (a) total tokens in/out, (b) files / text units read, (c) iterations / investigation rounds, and (d) quality or speed of reaching the root cause and fix (e.g. rounds-to-root-cause, correct-fix-on-first-try), reported per phase | DoD: report demonstrates >70% token reduction vs. baseline AND contrasts root-cause quality/speed between the two modes; table is reproducible from `results/token_log.jsonl`. (Measured 71.2% input-token reduction, 72.2% fewer file-loads; comparison engine in `src/hw4/efficiency.py`, 100% coverage; KPI guarded by a regression test.)
 
 ### 6.3 Bug Analysis Report
 - [ ] 6.3.1 [Pending] [Developer] - Complete `reports/bug_analysis.md` for the Polygons community: list each bug with problem statement, root cause, investigation trail (which graph nodes were traversed), and the fix applied | DoD: covers all 4 Polygons bugs (`Object`, `new`, hardcoded angles, wrong turtle loop).

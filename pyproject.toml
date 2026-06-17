@@ -8,7 +8,6 @@ dependencies = [
     "langgraph",
     "langchain-core",
     "langchain-groq",
-    "langchain-google-genai",
     "python-dotenv",
     "ruff",
     "pytest",

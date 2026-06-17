@@ -18,3 +18,7 @@ credentials.json
 # Local config override — each developer has their own
 # Copy config/setup.example.json → config/setup.json and edit locally
 config/setup.json
+
+# Runtime logs (rotating debug logs are regenerated on every run)
+*.log
+*.log.*
