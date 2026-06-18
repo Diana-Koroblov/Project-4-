@@ -227,4 +227,4 @@ Every Python (.py) file created or modified in this project is subject to a 3-st
 - [x] 8.3.2 [Complete] - Full test suite passed: `uv run pytest --cov=src/hw4 --cov-report=term-missing` | Evidence: `assets/pytest_coverage.png`
 - [x] 8.3.3 [Complete] - Ruff clean: `uv run ruff check src/` | Evidence: `assets/ruff_clean.png`
 - [x] 8.3.4 [Complete] - `docs/prompts_log.md` has entries PL-001–PL-015 covering all phases 0–8
-- [ ] 8.3.5 [Pending] - Git-tag final submission: `git tag submission-ready && git push --tags`
+- [X] 8.3.5 [Pending] - Git-tag final submission: `git tag submission-ready && git push --tags`
