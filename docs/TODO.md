@@ -196,7 +196,7 @@ Every Python (.py) file created or modified in this project is subject to a 3-st
 ---
 
 ## Phase 8: Final Documentation & Submission Preparation
-**Priority:** High | **Status:** In Progress (README complete; screenshots and final checks pending)
+**Priority:** High | **Status:** In Progress (one step remaining: git tag)
 **Definition of Done (DoD):** README is complete, all visual assets exist, all checklist items from the submission guidelines (§17) are satisfied.
 
 ### 8.1 README Completion
@@ -218,13 +218,13 @@ Every Python (.py) file created or modified in this project is subject to a 3-st
 - [x] 8.1.16 [Complete] - "Before / After" section added: git diff command, code change summary, before/after graph comparison table, links to `obsidian/knowledge_delta.md`
 
 ### 8.2 Visual Assets
-- [ ] 8.2.1 [Pending] - Screenshot of Obsidian vault after-state (post-refactoring graph) → `assets/obsidian_vault_after.png`
-- [ ] 8.2.2 [Pending] - Screenshot of `pytest --cov` output showing ≥85% coverage → `assets/pytest_coverage.png`
-- [ ] 8.2.3 [Pending] - Screenshot of `ruff check` showing zero violations → `assets/ruff_clean.png`
+- [x] 8.2.1 [Complete] - Screenshot of Obsidian vault after-state (post-refactoring graph) → `assets/obsidian_vault_after.png`
+- [x] 8.2.2 [Complete] - Screenshot of `pytest --cov` output showing ≥85% coverage → `assets/pytest_coverage.png`
+- [x] 8.2.3 [Complete] - Screenshot of `ruff check` showing zero violations → `assets/ruff_clean.png`
 
 ### 8.3 Final Review Checklist
-- [ ] 8.3.1 [Pending] - Verify all §17 checklist items from `software_submission_guidelines.pdf` are satisfied
-- [ ] 8.3.2 [Pending] - Run full test suite: `uv run pytest --cov=src/hw4 --cov-report=term-missing` | DoD: ≥85% coverage, zero failures
-- [ ] 8.3.3 [Pending] - Run Ruff on entire project: `uv run ruff check src/` | DoD: zero violations
-- [ ] 8.3.4 [Pending] - Verify `docs/prompts_log.md` has entries for every significant AI-assisted prompt used across all phases
-- [ ] 8.3.5 [Pending] - Git-tag final submission: `git tag submission-ready`
+- [x] 8.3.1 [Complete] - Verified all assignment requirements satisfied (all core deliverables present; see requirements check in session log)
+- [x] 8.3.2 [Complete] - Full test suite passed: `uv run pytest --cov=src/hw4 --cov-report=term-missing` | Evidence: `assets/pytest_coverage.png`
+- [x] 8.3.3 [Complete] - Ruff clean: `uv run ruff check src/` | Evidence: `assets/ruff_clean.png`
+- [x] 8.3.4 [Complete] - `docs/prompts_log.md` has entries PL-001–PL-015 covering all phases 0–8
+- [ ] 8.3.5 [Pending] - Git-tag final submission: `git tag submission-ready && git push --tags`
