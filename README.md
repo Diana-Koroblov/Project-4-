@@ -76,10 +76,14 @@ uv run python main.py
 uv run pytest tests/ --cov=src --cov-report=term-missing
 ```
 
+![pytest coverage results](assets/pytest_coverage.png)
+
 ### Lint
 ```bash
 uv run ruff check src/
 ```
+
+![ruff check — zero violations](assets/ruff_clean.png)
 
 ## Research Questions
 
@@ -193,6 +197,14 @@ remediated. The target OOP diagram above is now the **actual** state of the code
 | Polygons nodes | `Object`, `calc_polygon_details()`, `draw_polygon()`, 3× `# TODO` rationale | `Shape` (abstract) + `Polygon` with 5 methods; God Functions & `Object` removed |
 
 > The after-state was regenerated with the real Graphify CLI (`graphify update .`, v0.8.40, 100% AST-extracted, no LLM) run inside `src/broken-python/`. Graphify now reports `Polygon` → `Shape` as the top God Nodes (8 and 6 edges) and flags the new `Polygon --inherits--> Shape` bridge.
+
+**Obsidian vault — before state:**
+
+![Obsidian vault before state](assets/obsidian_vault_before.png)
+
+**Obsidian vault — after state:**
+
+![Obsidian vault after state](assets/obsidian_vault_after.png)
 
 ### Math Quiz Consolidation — After-State (Phase 5 ✅)
 
@@ -322,3 +334,155 @@ The console shows INFO and above; the file captures full DEBUG detail. Adjust le
 **Decision:** LangGraph
 
 **Rationale:** LangGraph allows explicit manipulation of `AgentState`, enabling the Gatekeeper's hard memory reset between phases. CrewAI's autonomous agent swarms do not support deterministic context compaction, which is required to meet the >70% token efficiency KPI.
+
+---
+
+## Configuration Guide
+
+All runtime behaviour is controlled by files in `config/` — no hardcoded values in source code.
+
+### `config/setup.json` (gitignored — copy from `setup.example.json`)
+
+| Key | Default | Effect |
+|-----|---------|--------|
+| `llm.provider` | `"groq"` | LLM backend (`"groq"` is the only supported value) |
+| `llm.model` | `"llama-3.3-70b-versatile"` | Model name passed to the provider |
+| `llm.temperature` | `0.0` | Deterministic output; raise for more creative responses |
+| `llm.max_tokens` | `8192` | Max tokens per completion |
+| `agent.max_iterations` | `10` | Tool-loop iteration cap per subagent |
+| `agent.verbose` | `false` | Print LangGraph step trace to stdout |
+| `agent.token_budget` | `100000` | Soft warning threshold (tokens); not enforced as a hard cut-off |
+| `paths.obsidian_vault` | `"obsidian/"` | Vault root for Obsidian reader tool |
+| `paths.source_root` | `"src/broken-python/"` | Sandbox root for file I/O tools |
+| `paths.reports_dir` | `"reports/"` | Output directory for analysis reports |
+| `paths.results_dir` | `"results/"` | Output directory for token logs and run artefacts |
+| `extensions.orphan_detector.enabled` | `true` | Whether the OrphanDetector runs on startup |
+| `extensions.orphan_detector.max_edge_threshold` | `1` | Nodes with ≤ this many edges are flagged as orphans |
+
+### `config/rate_limits.json`
+
+| Key | Default | Effect |
+|-----|---------|--------|
+| `groq.requests_per_minute` | `30` | API Gatekeeper queue rate |
+| `groq.tokens_per_minute` | `6000` | Token-rate ceiling for the queue |
+| `groq.max_retries` | `3` | Retry count on transient errors |
+| `groq.retry_backoff_seconds` | `2` | Base backoff between retries (exponential) |
+
+### `config/logging_config.json`
+
+Controls log levels and handlers. The `hw4` logger writes DEBUG → `results/agent.log` (rotating, 1 MB × 3 backups) and INFO → console. Edit here — no code changes required.
+
+---
+
+## Token Efficiency Results
+
+> **Headline: 70.9% reduction in input tokens** — above the §5.4 KPI of >70%.
+
+| Metric | Baseline | Guided | Saving |
+|--------|----------|--------|--------|
+| Input tokens | 7,584 | 2,207 | **70.9%** |
+| Total tokens | 8,830 | 3,453 | 60.9% |
+| File-loads | 18 | 5 | **72.2%** |
+| Noise files per phase | 8 of 9 | 0 of 5 | 100% |
+| Rounds to root cause | 2 (blind scan) | 1 (graph hop) | 50% |
+| Correct fix first try | No (re-reads) | Yes | — |
+
+The baseline reads all 9 files in `src/broken-python/` for both phases — including the MIT licence, two READMEs, the three superseded step files, and the other community's source. The guided agent reads only the Obsidian entry page and the single targeted source file, producing identical output tokens (the fix text) with 70.9% less input context.
+
+Full methodology and reproducibility instructions: [`reports/efficiency_report.md`](reports/efficiency_report.md)
+
+---
+
+## Tooling Workflow: Graphify + Obsidian
+
+Graphify and Obsidian are not just output deliverables — they are the active infrastructure the agent uses to navigate the codebase.
+
+**Step 1 — Generate the graph.** Running `graphify update .` inside `src/broken-python/` performs AST-only static analysis (no LLM) and produces `obsidian/graph.json` (nodes, edges, community assignments) and `obsidian/GRAPH_REPORT.md` (centrality, God Nodes, Orphan Nodes). This is a one-time reverse-engineering step, done before any agent runs.
+
+**Step 2 — Build the hot-context pages.** The graph report identifies two communities (Polygons and Math Quiz) and their central nodes. From this, three Obsidian navigation pages were authored manually:
+- `obsidian/index.md` — the Master Router page; tells the agent what communities exist, how many bugs each has, and which `hot_*.md` page to read first.
+- `obsidian/hot_polygons.md` — the focused Polygons context: suspect file path, known bugs, target OOP architecture, task checklist. The agent reads this as its sole domain context.
+- `obsidian/hot_mathsquiz.md` — the focused Math Quiz context: same structure.
+
+**Step 3 — Agent navigation.** The Router node reads `index.md` via the `read_obsidian_page` tool. Each subagent reads its `hot_*.md` page, then resolves a graph node ID to a file path via `extract_node_content`, and reads only that file via `read_source_file`. The vault is an active knowledge space — every read is purposeful and graph-grounded.
+
+**Step 4 — After-state update.** After Subagent Alpha refactored `polygons.py`, `graphify update .` was re-run to capture the after-state graph (`docs/after_state/`). The delta is documented in `obsidian/knowledge_delta.md`.
+
+---
+
+## Reverse-Engineering Walkthrough
+
+The initial codebase was unknown — no documentation beyond a README stub. The reverse-engineering process unfolded in three steps:
+
+**1. Graph generation revealed the architecture.** Running Graphify produced a 27-node, 23-edge graph with 6 communities. The report immediately showed that Polygons and Math Quiz share no edges — they are completely isolated domains. This resolved the central architectural question (one system or two?) in seconds, without reading a single line of code.
+
+**2. God Nodes identified the investigation entry points.** The report ranked nodes by centrality. `Polygon` (4 edges) and `Maths Quiz` (4 edges) are the two God Nodes — every fix must either touch them or pass through them. Within Polygons, `calc_polygon_details()` is the God Function: a module-level procedure with 2 edges that handles all geometry logic outside the class.
+
+**3. Orphan Nodes revealed dead weight.** The Orphan Node Detector flagged 19 weakly-connected nodes, including `Introduction`, `Objectives`, `The Files`, and `MIT License` — documentation nodes with ≤1 edge that a graph-guided agent cannot navigate to. Knowing these upfront prevents wasted token budget.
+
+The `hot_polygons.md` and `hot_mathsquiz.md` pages distil this RE into per-community context: suspect file, known bugs, and target architecture — the minimum signal an agent needs to act.
+
+---
+
+## Bug → Root Cause → Fix
+
+Full investigation trails with graph node traversal paths are in [`reports/bug_analysis.md`](reports/bug_analysis.md). Headlines:
+
+### Polygons (4 bugs)
+
+| Bug | Root Cause | Fix |
+|-----|------------|-----|
+| `class Polygon(Object)` | `Object` is not a Python built-in; Python 3 uses lowercase `object` | `class Polygon(Shape)` (via abstract `Shape(ABC)` base) |
+| `new Polygon(5, 100)` | JavaScript instantiation syntax used in Python | `Polygon(5, 100)` |
+| Hardcoded angles (3→60°, 4→90° only) | `if`/`elif` table with no general formula | `(sides - 2) * 180 / sides` |
+| Turtle loop always draws a hexagon | `range(0, 6)` with constant `60°` turn regardless of `sides` | `range(self.sides)` with `360 / self.sides` |
+
+### Math Quiz (7 bugs)
+
+| Bug | Root Cause | Fix |
+|-----|------------|-----|
+| `print "..."` syntax | Python 2 statement syntax | `print(...)` |
+| `if answer = N` | Assignment `=` instead of comparison `==` | `if answer == N` |
+| `else if` | JavaScript/C keyword; Python uses `elif` | `elif` |
+| Score never increments | `score + 1` computed but never stored | `self.score += 1` |
+| 6 wrong expected answers | Hardcoded literals copied incorrectly (e.g. 8×7→55, 4×9→49) | QUESTIONS class constant with tuple pairs; correct answer is always `first * second` |
+| Only 6 questions | Original code had 6 hardcoded questions, claimed 10 | 10 pairs in `QUESTIONS` |
+| Every question labelled "Question 1" | Static `print("Question 1:")` | `print(f"Question {number}:")` |
+
+---
+
+## Before / After
+
+### Code diff
+
+After completing both phases, the before/after proof can be reproduced:
+
+```bash
+git diff before-agent HEAD -- src/broken-python/
+```
+
+The tag `before-agent` captures the state before any agent-driven modifications. Key changes visible in the diff:
+- `polygons.py`: `class Polygon(Object)` → `class Shape(ABC)` + `class Polygon(Shape)`, God Functions moved inside the class, dynamic geometry formulas
+- `mathsquiz.py`: Python-2 syntax removed, full `MathQuiz` OOP class replaces procedural script, 10 correct questions
+
+### Knowledge delta
+
+The Graphify graph before-state (27 nodes · 23 edges · 6 communities) was regenerated after Phase 4 (35 nodes · 30 edges · 12 communities). Key differences:
+
+| Change | Before | After |
+|--------|--------|-------|
+| `calc_polygon_details` | God Function (module-level node) | Removed — logic is now `Polygon.calculate_internal_angle()` |
+| `draw_polygon` | God Function (module-level node) | Removed — logic is now `Polygon.draw()` |
+| `Object` | Dangling base class node | Removed |
+| `Shape` | Absent | New abstract base class node |
+| `Polygon` edges | 4 | 8 (now owns the former God Function methods) |
+
+Full delta: [`obsidian/knowledge_delta.md`](obsidian/knowledge_delta.md)
+
+---
+
+## License & Attribution
+
+This project builds on [`martinpeck/broken-python`](https://github.com/martinpeck/broken-python) (MIT License), which provides the intentionally broken source code vendored under `src/broken-python/`. The original licence is preserved at [`src/broken-python/LICENSE.txt`](src/broken-python/LICENSE.txt).
+
+Project code (everything outside `src/broken-python/`) is original work for EX04 — Reverse Engineering, Debugging & Token-Efficient Agentic AI, by Dr. Yoram Segal.

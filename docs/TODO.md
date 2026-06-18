@@ -196,7 +196,7 @@ Every Python (.py) file created or modified in this project is subject to a 3-st
 ---
 
 ## Phase 8: Final Documentation & Submission Preparation
-**Priority:** High | **Status:** Pending
+**Priority:** High | **Status:** In Progress (README complete; screenshots and final checks pending)
 **Definition of Done (DoD):** README is complete, all visual assets exist, all checklist items from the submission guidelines (§17) are satisfied.
 
 ### 8.1 README Completion
@@ -208,14 +208,14 @@ Every Python (.py) file created or modified in this project is subject to a 3-st
 - [x] 8.1.6 [Complete] - OOP before/after schema (Mermaid)
 - [x] 8.1.7 [Complete] - Agent workflow diagram (Mermaid)
 - [x] 8.1.8 [Complete] - ADR-001 for LangGraph
-- [ ] 8.1.9 [Pending] - Configuration guide (what each `config/*.json` key does)
-- [ ] 8.1.10 [Pending] - Token efficiency results summary (link to `reports/efficiency_report.md`)
+- [x] 8.1.9 [Complete] - Configuration guide added: table of every key in `setup.json`, `rate_limits.json`, and `logging_config.json` with defaults and effect descriptions
+- [x] 8.1.10 [Complete] - Token efficiency results summary added: headline 70.9% figure, 6-row metric table, link to `reports/efficiency_report.md`
 - [x] 8.1.11 [Complete] - Orphan Node Detector usage section (added in "Original Extension — Orphan Node Detector (Phase 7)")
-- [ ] 8.1.12 [Pending] - License and attribution section (credit `martinpeck/broken-python`)
-- [ ] 8.1.13 [Pending] - "Tooling Workflow" section explaining how Grphify and Obsidian were used in practice (§8 bullet 6): how `graph.json`/`GRAPH_REPORT.md` were generated, how `index.md` → `hot_*.md` drove navigation, and why the vault is an active knowledge space rather than a file dump
-- [ ] 8.1.14 [Pending] - "Reverse-Engineering Walkthrough" section narrating the RE process performed (§8 bullet 7): how the real architecture, central components, and God Nodes were uncovered from sparse docs (expands beyond the Q&A bullets)
-- [ ] 8.1.15 [Pending] - "Bug → Root Cause → Fix" summary section in the README itself (§8 bullet 8), linking to `reports/bug_analysis.md` for the full trail | DoD: each community's headline bug, its root cause, and the applied fix appear directly in the README
-- [ ] 8.1.16 [Pending] - "Before / After" section in the README (§8 bullet 9) presenting both the code diff (`git diff before-agent HEAD`) and the knowledge delta (`obsidian/knowledge_delta.md`), with before/after graph or schema visuals
+- [x] 8.1.12 [Complete] - License and attribution section added: credits `martinpeck/broken-python` (MIT), preserves original licence path, identifies project code as original EX04 work
+- [x] 8.1.13 [Complete] - "Tooling Workflow: Graphify + Obsidian" section added: 4-step narrative (generate graph → build hot pages → agent navigation → after-state update)
+- [x] 8.1.14 [Complete] - "Reverse-Engineering Walkthrough" section added: 3-step narrative (graph reveals architecture, God Nodes identify entry points, Orphan Nodes reveal dead weight)
+- [x] 8.1.15 [Complete] - "Bug → Root Cause → Fix" section added: Polygons 4-row table + Math Quiz 7-row table, each with root cause and fix; links to `reports/bug_analysis.md`
+- [x] 8.1.16 [Complete] - "Before / After" section added: git diff command, code change summary, before/after graph comparison table, links to `obsidian/knowledge_delta.md`
 
 ### 8.2 Visual Assets
 - [ ] 8.2.1 [Pending] - Screenshot of Obsidian vault after-state (post-refactoring graph) → `assets/obsidian_vault_after.png`
