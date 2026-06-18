@@ -4,6 +4,7 @@ from langchain_core.messages import SystemMessage
 from hw4.agents.beta_prompt import BETA_SYSTEM_PROMPT
 from hw4.state import AgentState
 from hw4.tools.registry import bind_agent_tools
+from hw4.tools.tool_call_repair import invoke_with_repair
 
 
 def make_beta_node(llm: BaseChatModel):
@@ -11,7 +12,7 @@ def make_beta_node(llm: BaseChatModel):
 
     def subagent_beta_node(state: AgentState) -> dict:
         messages = [SystemMessage(content=BETA_SYSTEM_PROMPT), *state["messages"]]
-        response = model.invoke(messages)
+        response = invoke_with_repair(model, messages)
         update: dict = {"messages": [response]}
         if not getattr(response, "tool_calls", None):
             update["completed_tasks"] = state["completed_tasks"] + ["beta:mathsquiz:complete"]
