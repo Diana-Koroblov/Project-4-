@@ -68,8 +68,8 @@ state between phases. Measured **70.7% input-token reduction** —
   proximity to failing tests.
 - **Dynamic git diff** generated from `graph.json` to show exactly which edges
   change after a fix.
-- **Orphan node detector:** auto-document nodes with ≤1 connection (4 found:
-  `Introduction`, `Objectives`, `The Files`, `MIT License`) — *built* as the
-  Phase 7 extension.
+- **Orphan node detector:** auto-document nodes with ≤1 connection (19 found,
+  incl. 4 notable documentation orphans: `Introduction`, `Objectives`, `The Files`,
+  `MIT License`) — *built* as the Phase 7 extension.
 - **Impact report:** given a changed node, traverse outbound edges to predict what
   breaks.

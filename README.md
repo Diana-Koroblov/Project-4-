@@ -118,7 +118,7 @@ The `hot_*.md` pages pre-filter: they identify the exact file and the exact bug 
 **8. What improvements, extensions, or additional agent mechanisms would you add?**
 - Centrality-ranked suspect list: score nodes by betweenness centrality × proximity to failing tests
 - Dynamic git diff generation from `graph.json` to show exactly which edges change after a fix
-- Orphan node detector: auto-document nodes with ≤1 connection (4 found: `Introduction`, `Objectives`, `The Files`, `MIT License`)
+- Orphan node detector: auto-document nodes with ≤1 connection (**19 found**, incl. 4 notable documentation orphans: `Introduction`, `Objectives`, `The Files`, `MIT License`)
 - Impact report: given a changed node, traverse outbound edges to predict what breaks
 
 ## Architectural Visualizations
@@ -264,6 +264,10 @@ graph LR
 ```
 
 The **Gatekeeper** node is the key innovation: it prevents Math Quiz context from contaminating Polygons analysis and vice versa, directly addressing the "Lost in the Middle" problem.
+
+**Live end-to-end run** (`run_live_agent.py`, real Groq). The orchestration completes every phase — `completed_tasks = [alpha:polygons:complete, phase:polygons:complete, beta:mathsquiz:complete]` — ending with *"MathQuiz module updated successfully."* in 9 LLM calls:
+
+![Live LangGraph agent run completing all phases on Groq](assets/live_agent_run.png)
 
 ### SDK Layer — the single entry point
 
@@ -427,6 +431,10 @@ Controls log levels and handlers. The `hw4` logger writes DEBUG → `results/age
 | Correct fix first try | No (re-reads) | Yes | — |
 
 The baseline reads all 9 files in `src/broken-python/` for both phases — including the MIT licence, two READMEs, the three superseded step files, and the other community's source. The guided agent reads only the Obsidian entry page and the single targeted source file, producing identical output tokens (the fix text) with 70.9% less input context.
+
+**Live measured run** (`live_efficiency.py`, real Groq tokenizer): baseline 7,674 → guided 2,296 input tokens — a **70.1%** reduction, corroborating the modelled 70.9% above and the 70.7% recorded in [`reports/efficiency_live_results.md`](reports/efficiency_live_results.md). Small run-to-run variation is expected on the live API:
+
+![Live token-efficiency comparison measured on Groq](assets/efficiency_comparison.png)
 
 Full methodology and reproducibility instructions: [`reports/efficiency_report.md`](reports/efficiency_report.md)
 
