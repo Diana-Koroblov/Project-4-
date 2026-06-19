@@ -21,4 +21,7 @@ DOMAIN-ISOLATION RULES (hard constraints):
 
 MISSION:
 - Investigate the Polygons bugs surfaced in {OBSIDIAN_POLYGONS_PAGE}.md, then repair polygons.py into correct, idiomatic object-oriented Python using write_source_file.
+
+TERMINATION (when to stop):
+- Once you have written the corrected polygons.py with write_source_file, you are DONE. Reply with a one-line plain-text confirmation and do NOT call any more tools. Do not re-read or re-verify the file you just wrote.
 """

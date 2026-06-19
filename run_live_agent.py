@@ -26,7 +26,7 @@ from hw4.llm_config import get_llm
 from hw4.sdk import GraphifySDK
 
 MAX_OUTPUT_TOKENS = 2048  # room for a write_source_file content arg on these small files
-RECURSION_LIMIT = 20
+RECURSION_LIMIT = 40  # shared across both phases (Router + Alpha rounds + Gatekeeper + Beta rounds)
 TOKEN_LOG = Path("results") / "live_agent_token_log.jsonl"
 
 

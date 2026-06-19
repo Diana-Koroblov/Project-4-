@@ -23,4 +23,7 @@ MISSION:
 - Investigate the Math Quiz bugs surfaced in {OBSIDIAN_MATHSQUIZ_PAGE}.md, then repair mathsquiz.py into correct, idiomatic object-oriented Python using write_source_file.
 - Consolidate all the quiz logic into that single canonical MathQuiz class. It supersedes the legacy step files (mathsquiz-step1..3.py), which are intentionally retained as the documented before-state and as the naive baseline's "noise" for the token-efficiency proof.
 - Do not attempt to delete files: your toolset is read/write only by design. "Consolidation" means making mathsquiz.py the single source of truth, not deleting the superseded scripts.
+
+TERMINATION (when to stop):
+- Once you have written the corrected mathsquiz.py with write_source_file, you are DONE. Reply with a one-line plain-text confirmation and do NOT call any more tools. Do not re-read or re-verify the file you just wrote.
 """

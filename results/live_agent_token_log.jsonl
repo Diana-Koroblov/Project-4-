@@ -1,6 +1,9 @@
-{"call": 1, "tokens_in": 1585, "tokens_out": 25}
-{"call": 2, "tokens_in": 2107, "tokens_out": 597}
-{"call": 3, "tokens_in": 2715, "tokens_out": 60}
-{"call": 4, "tokens_in": 1686, "tokens_out": 25}
-{"call": 5, "tokens_in": 2493, "tokens_out": 40}
-{"call": 6, "tokens_in": 2544, "tokens_out": 64}
+{"call": 1, "tokens_in": 824, "tokens_out": 44}
+{"call": 2, "tokens_in": 1177, "tokens_out": 64}
+{"call": 3, "tokens_in": 1638, "tokens_out": 834}
+{"call": 4, "tokens_in": 2211, "tokens_out": 9}
+{"call": 5, "tokens_in": 904, "tokens_out": 44}
+{"call": 6, "tokens_in": 1278, "tokens_out": 61}
+{"call": 7, "tokens_in": 2084, "tokens_out": 179}
+{"call": 8, "tokens_in": 2131, "tokens_out": 1091}
+{"call": 9, "tokens_in": 3092, "tokens_out": 89}

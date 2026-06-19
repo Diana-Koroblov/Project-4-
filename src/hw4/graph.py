@@ -20,6 +20,19 @@ from hw4.state import AgentState
 from hw4.tools.registry import AGENT_TOOLS
 
 
+def _tool_error_to_message(exc: Exception) -> str:
+    """Return tool exceptions to the agent as a recoverable ToolMessage.
+
+    LangGraph's default ToolNode handler only swallows ``ToolInvocationError`` and
+    re-raises everything else, so a bad path from the model — e.g. following a
+    markdown link into ``read_source_file`` and triggering ``FileNotFoundError``,
+    or a sandbox-escape ``PermissionError`` from ``file_io`` — would crash the
+    whole graph. Surfacing the error text instead lets the subagent see what went
+    wrong and correct course (request a real source file) without aborting the run.
+    """
+    return f"TOOL ERROR ({type(exc).__name__}): {exc}"
+
+
 def _has_tool_calls(state: AgentState) -> bool:
     messages = state["messages"]
     return bool(messages) and bool(getattr(messages[-1], "tool_calls", None))
@@ -48,10 +61,10 @@ def build_graph(llm=None):
     graph = StateGraph(AgentState)
     graph.add_node("Router", router_node)
     graph.add_node("SubagentAlpha", make_alpha_node(llm))
-    graph.add_node("AlphaTools", ToolNode(AGENT_TOOLS))
+    graph.add_node("AlphaTools", ToolNode(AGENT_TOOLS, handle_tool_errors=_tool_error_to_message))
     graph.add_node("Gatekeeper", gatekeeper_node)
     graph.add_node("SubagentBeta", make_beta_node(llm))
-    graph.add_node("BetaTools", ToolNode(AGENT_TOOLS))
+    graph.add_node("BetaTools", ToolNode(AGENT_TOOLS, handle_tool_errors=_tool_error_to_message))
 
     graph.add_edge(START, "Router")
     graph.add_edge("Router", "SubagentAlpha")
