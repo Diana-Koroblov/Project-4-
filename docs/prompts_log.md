@@ -205,4 +205,38 @@ This document records all significant prompts used with AI assistance during the
 
 ---
 
-*Log started: 2025-06-16 | Maintainer: diana | Guidelines reference: §8.3*
+## Phase 9 — Professional-Standards Hardening (API Gatekeeper + SDK)
+
+### [PL-016] Implement the Central API Gatekeeper & Rate Limiting (§5)
+- **Date:** 2026-06-19
+- **Model:** Claude Opus 4.8
+- **Phase:** 9
+- **Prompt:**
+  > Let's start of implementing 1, the API gatekeeper and rate limiting. check the code you write after you finish.
+- **Output Summary:** Built `src/hw4/gateway/` (config loader, `SlidingWindowRateLimiter`, bounded FIFO `OverflowQueue`, `ApiGatekeeper` with admit→drain→retry→log, `GatekeptChatModel` proxy) and wired it into `get_llm()`. Added 5 gateway test modules (gateway package at 100% coverage; overall 87%→91%).
+- **Refinements:** Self-review caught that `llm.bind(...)` in `live_efficiency.py` fell through the proxy and bypassed the gatekeeper; added a `bind()` override + regression test. Updated `test_llm_config` to assert the gatekept return type.
+- **Verdict:** Accepted with edits
+
+### [PL-017] Author the Dedicated API-Gatekeeper PRD (§2.3)
+- **Date:** 2026-06-19
+- **Model:** Claude Opus 4.8
+- **Phase:** 9
+- **Prompt:**
+  > yeah do the 2.3 requirement.
+- **Output Summary:** Wrote `docs/PRD_api_gatekeeper.md` covering all four §2.3 sections (theoretical background with the sliding-window admission inequality, I/O + performance metrics, constraints & alternatives table, success criteria + a test-scenario→test map) and listed it in `docs/PLAN.md`.
+- **Refinements:** Added a disambiguation note distinguishing the API gatekeeper from the context-reset Gatekeeper node.
+- **Verdict:** Accepted
+
+### [PL-018] Populate the SDK Layer & Thin the Controllers (§4.1)
+- **Date:** 2026-06-19
+- **Model:** Claude Opus 4.8
+- **Phase:** 9
+- **Prompt:**
+  > let's do gap #2 populating the empty SDK layer.
+- **Output Summary:** Extracted `build_graph` into `src/hw4/graph.py`; built `GraphifySDK` (`sdk/core.py`) exposing all business operations and `run_repair`/`RepairResult` (`sdk/repair.py`); reduced `main.py` and `run_live_agent.py` to thin delegating controllers (the latter now uses the gatekept LLM). Added `tests/test_sdk.py`; suite at 182 tests, 91% coverage, 0 Ruff violations.
+- **Refinements:** `main.py` re-exports `build_graph` so existing `from main import build_graph` imports (and tests) keep working.
+- **Verdict:** Accepted
+
+---
+
+*Log started: 2025-06-16 | Updated: 2026-06-19 (Phase 9) | Guidelines reference: §8.3*

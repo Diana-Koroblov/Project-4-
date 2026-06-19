@@ -1,7 +1,7 @@
 # PRD: Token Tracker
 
 ## 1. Mechanism Overview
-The `TokenTracker` class (`src/tools/token_tracker.py`) wraps every LLM call and records per-call token metrics. It is the primary instrument for proving the >70% token reduction KPI against the naive baseline.
+The `TokenTracker` class (`src/hw4/tools/token_tracker.py`) wraps every LLM call and records per-call token metrics. It is the primary instrument for proving the >70% token reduction KPI against the naive baseline.
 
 ## 2. Problem Statement
 Without structured token logging, the efficiency claim ("graph-guided agents use 70%+ fewer tokens than naive whole-repo reads") is unverifiable. The Token Tracker makes every LLM interaction auditable, enabling the efficiency report in `reports/efficiency_report.md`.
@@ -28,7 +28,7 @@ class TokenTracker:
 ```
 
 ### 3.3 Baseline Comparison
-`TokenTracker.get_summary()` must include a `"vs_baseline"` key populated after `src/baseline_agent.py` runs, showing percentage reduction.
+`TokenTracker.get_summary()` must include a `"vs_baseline"` key populated after `src/hw4/baseline_agent.py` runs, showing percentage reduction.
 
 ### 3.4 Integration Point
 `TokenTracker` is instantiated once in `main.py` and passed into each node via `AgentState.token_log`. It is NOT a LangGraph tool (not bound to the LLM) — it is infrastructure.

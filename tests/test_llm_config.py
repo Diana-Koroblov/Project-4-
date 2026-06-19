@@ -31,11 +31,15 @@ class TestGetLLM:
         with pytest.raises(EnvironmentError, match="GROQ_API_KEY"):
             llm_config.get_llm()
 
-    def test_groq_happy_path_attaches_callback(self, monkeypatch):
+    def test_groq_happy_path_wraps_in_gatekeeper_with_callback(self, monkeypatch):
         monkeypatch.setattr(llm_config, "_load_config", lambda: dict(_GROQ_CFG))
         monkeypatch.setenv("GROQ_API_KEY", "test-key")
         llm = llm_config.get_llm()
-        assert llm.__class__.__name__ == "ChatGroq"
+        # §5.1: the model is returned behind the API gatekeeper proxy...
+        assert llm.__class__.__name__ == "GatekeptChatModel"
+        # ...wrapping a real ChatGroq that still carries the audit callback
+        # (delegated through the proxy's __getattr__).
+        assert llm._inner.__class__.__name__ == "ChatGroq"
         assert any(
             cb.__class__.__name__ == "GroqLoggingCallback" for cb in (llm.callbacks or [])
         )

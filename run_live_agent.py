@@ -6,42 +6,35 @@ tool-call repair shim in the subagent nodes (hw4.tools.tool_call_repair) turns
 Groq's `tool_use_failed` responses back into well-formed tool calls, so the
 llama-3.3-70b tool loop completes instead of crashing.
 
-A callback meters real token usage across every turn and throttles calls to
-respect the free-tier tokens-per-minute window. The caller restores the vendored
-source afterwards (the agent's write_source_file tool mutates it).
+This is a thin controller: it builds the gatekept LLM, attaches a token meter,
+and delegates the run to GraphifySDK.run_repair. The central API gatekeeper
+(hw4.gateway) now paces the calls, so no manual sleep is needed here.
 
 Run: uv run python run_live_agent.py
 """
 
 import json
-import os
-import time
+import sys
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).parent / "src"))
 
 from dotenv import load_dotenv
 from langchain_core.callbacks import BaseCallbackHandler
-from langchain_core.messages import AIMessage, HumanMessage, ToolMessage
-from langchain_groq import ChatGroq
 
-from main import build_graph
+from hw4.llm_config import get_llm
+from hw4.sdk import GraphifySDK
 
-MODEL = "llama-3.3-70b-versatile"
 MAX_OUTPUT_TOKENS = 2048  # room for a write_source_file content arg on these small files
-PACE_SECONDS = 30  # throttle to stay inside the ~12k tokens/min free-tier window
 RECURSION_LIMIT = 20
 TOKEN_LOG = Path("results") / "live_agent_token_log.jsonl"
 
 
 class Meter(BaseCallbackHandler):
-    """Throttle each LLM call and accumulate real per-call token usage."""
+    """Accumulate real per-call token usage across the run."""
 
-    def __init__(self, pace_seconds: int = PACE_SECONDS) -> None:
+    def __init__(self) -> None:
         self.records: list[dict] = []
-        self._pace = pace_seconds
-
-    def on_llm_start(self, *args, **kwargs) -> None:
-        if self.records:
-            time.sleep(self._pace)
 
     def on_llm_end(self, response, **kwargs) -> None:
         try:
@@ -67,33 +60,13 @@ class Meter(BaseCallbackHandler):
 
 def main() -> None:
     load_dotenv()
-    llm = ChatGroq(
-        api_key=os.environ["GROQ_API_KEY"],
-        model=MODEL,
-        temperature=0.0,
-        max_tokens=MAX_OUTPUT_TOKENS,
-    )
-    app = build_graph(llm=llm)
+    # Cap output tokens but keep the model gatekept (bind stays behind the gateway).
+    llm = get_llm().bind(max_tokens=MAX_OUTPUT_TOKENS)
+    sdk = GraphifySDK(llm=llm)
     meter = Meter()
-    seed = HumanMessage(
-        content="Begin the investigation. Follow your Obsidian entry page and fix the bugs in your domain."
-    )
 
-    print(f"Invoking the live LangGraph agent on Groq (model={MODEL})...\n", flush=True)
-    tool_calls_made: list[str] = []
-    final: dict = {}
-    for state in app.stream(
-        {"messages": [seed]},
-        stream_mode="values",
-        config={"callbacks": [meter], "recursion_limit": RECURSION_LIMIT},
-    ):
-        final = state
-        for msg in state.get("messages", []):
-            if isinstance(msg, ToolMessage):
-                tool_calls_made.append(msg.name)
-            elif isinstance(msg, AIMessage):
-                for call in getattr(msg, "tool_calls", None) or []:
-                    print(f"  tool call -> {call['name']}({call['args']})", flush=True)
+    print("Invoking the live LangGraph agent on Groq (model from config)...\n", flush=True)
+    result = sdk.run_repair(recursion_limit=RECURSION_LIMIT, callbacks=[meter])
 
     TOKEN_LOG.parent.mkdir(parents=True, exist_ok=True)
     with TOKEN_LOG.open("w", encoding="utf-8") as fh:
@@ -104,13 +77,11 @@ def main() -> None:
     print(f"  LLM calls         : {len(meter.records)}")
     print(f"  Real input tokens : {meter.tokens_in}")
     print(f"  Real output tokens: {meter.tokens_out}")
-    print(f"  Tools executed    : {len(set(tool_calls_made))} unique, {len(tool_calls_made)} total")
-    print(f"  completed_tasks   : {final.get('completed_tasks')}")
-    print(f"  current_phase     : {final.get('current_phase')}")
-    last = final.get("messages", [])
-    if last:
-        preview = (last[-1].content or "")[:400].replace("\n", " ")
-        print(f"  final message     : {preview}")
+    print(f"  Tools executed    : {len(set(result.tool_calls))} unique, {len(result.tool_calls)} total")
+    print(f"  completed_tasks   : {result.completed_tasks}")
+    print(f"  current_phase     : {result.current_phase}")
+    if result.final_message:
+        print(f"  final message     : {result.final_message}")
 
 
 if __name__ == "__main__":

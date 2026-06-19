@@ -12,6 +12,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 from hw4.constants import CONFIG_SETUP_PATH
+from hw4.gateway import wrap_with_gatekeeper
 from hw4.logging_setup import GroqLoggingCallback, configure_logging
 
 
@@ -55,7 +56,7 @@ def get_llm() -> "ChatGroq":  # noqa: F821
         raise EnvironmentError("GROQ_API_KEY is not set. Add it to your .env file.")
 
     logger.info("Creating Groq LLM | model=%s", cfg["model"])
-    return ChatGroq(
+    model = ChatGroq(
         api_key=api_key,
         model=cfg["model"],
         temperature=cfg["temperature"],
@@ -63,3 +64,6 @@ def get_llm() -> "ChatGroq":  # noqa: F821
         # Attach the audit callback so every API call is logged to results/agent.log.
         callbacks=[GroqLoggingCallback()],
     )
+    # §5.1: route every external API call through the central gatekeeper so rate
+    # limits (config/rate_limits.json) are enforced and overflow is queued.
+    return wrap_with_gatekeeper(model, provider)

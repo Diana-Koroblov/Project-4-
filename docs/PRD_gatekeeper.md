@@ -38,4 +38,4 @@ The Gatekeeper is the enforcement mechanism for the Zero-Edge isolation rule:
 - [ ] `state["messages"]` is `[]` after `gatekeeper(state)` is called with a non-empty messages list
 - [ ] `state["current_phase"]` equals `"mathsquiz"` after the call
 - [ ] No LLM calls occur during Gatekeeper execution (verifiable via mock)
-- [ ] Gatekeeper is implemented in `src/nodes/gatekeeper.py` in ≤ 50 lines
+- [ ] Gatekeeper is implemented in `src/hw4/nodes/gatekeeper.py` in ≤ 50 lines

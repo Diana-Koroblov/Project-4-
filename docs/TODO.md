@@ -62,7 +62,7 @@ Every Python (.py) file created or modified in this project is subject to a 3-st
 ---
 
 ## Phase 2: Core Orchestration Engine (LangGraph)
-**Priority:** High | **Status:** Pending
+**Priority:** High | **Status:** Complete
 **Definition of Done (DoD):** The StateGraph is defined, nodes are connected, and the sequential execution flow is runnable end-to-end (dry run with mocked LLM passes).
 
 ### 2.1 AgentState Schema
@@ -76,8 +76,8 @@ Every Python (.py) file created or modified in this project is subject to a 3-st
   - [x] **Validation:** 12 lines — within 150-line limit.
 
 ### 2.3 StateGraph Assembly
-- [x] 2.3.1 [Complete] [Architect] - Compile the `StateGraph` in `main.py` with strict sequential edges: `START → Router → SubagentAlpha → Gatekeeper → SubagentBeta → END` | DoD: graph compiles without errors; `graph.get_graph().draw_mermaid()` matches the planned workflow diagram.
-  - [x] **Validation:** 45 lines — within 150-line limit.
+- [x] 2.3.1 [Complete] [Architect] - Compile the `StateGraph` with strict sequential edges: `START → Router → SubagentAlpha → Gatekeeper → SubagentBeta → END` | DoD: graph compiles without errors; `graph.get_graph().draw_mermaid()` matches the planned workflow diagram. (Originally in `main.py`; extracted to `src/hw4/graph.py` in Phase 9 so it is importable package logic exposed via the SDK — `main.py` re-exports `build_graph` for back-compat.)
+  - [x] **Validation:** 52 lines — within 150-line limit.
 - [x] 2.3.2 [Complete] [Tester] - Write a dry-run smoke test in `tests/test_graph.py` using a mocked LLM (`FakeListChatModel`) that confirms the graph traverses all 5 nodes in order without errors | DoD: `pytest tests/test_graph.py` passes (5/5).
   - [x] **Validation:** 65 lines — within 150-line limit.
 - [x] 2.3.3 [Complete] [Developer] - Updated README.md with LangGraph orchestration table, AgentState schema, and Gatekeeper behavior documentation. Workflow Mermaid diagram already present.
@@ -227,4 +227,25 @@ Every Python (.py) file created or modified in this project is subject to a 3-st
 - [x] 8.3.2 [Complete] - Full test suite passed: `uv run pytest --cov=src/hw4 --cov-report=term-missing` | Evidence: `assets/pytest_coverage.png`
 - [x] 8.3.3 [Complete] - Ruff clean: `uv run ruff check src/` | Evidence: `assets/ruff_clean.png`
 - [x] 8.3.4 [Complete] - `docs/prompts_log.md` has entries PL-001–PL-015 covering all phases 0–8
-- [X] 8.3.5 [Pending] - Git-tag final submission: `git tag submission-ready && git push --tags`
+- [x] 8.3.5 [Complete] - Git-tag final submission: `git tag submission-ready` (tags `before-agent` and `submission-ready` present).
+
+---
+
+## Phase 9: Professional-Standards Hardening (Post-Submission Re-Audit)
+**Priority:** High | **Status:** Complete
+**Context:** A re-audit against `project_requirements.md` surfaced two mandatory-checklist gaps (§17.2): the §5 API gatekeeper / rate limiting was not implemented, and the §4.1 SDK layer was an empty placeholder. This phase closes both, with a dedicated PRD per §2.3.
+**Definition of Done (DoD):** All external API calls pass a central gatekeeper; all business operations are exposed via the SDK; 0 Ruff violations; coverage ≥85% (currently 91%); every file ≤150 LOC.
+
+### 9.1 Central API Gatekeeper & Rate Limiting (§5)
+- [x] 9.1.1 [Complete] [Developer] - Implement `src/hw4/gateway/` package: `config.py` (`RateLimitConfig` loaded from `config/rate_limits.json`), `rate_limiter.py` (`SlidingWindowRateLimiter`, RPM+TPM), `overflow_queue.py` (bounded FIFO + backpressure alert), `gatekeeper.py` (`ApiGatekeeper` admit→drain→retry→log + `get_gatekeeper` singleton), `llm_proxy.py` (`GatekeptChatModel`) | DoD: rate limits read only from config; overflow queued FIFO with backpressure; transient errors retried with exponential backoff; every call logged to `results/agent.log`.
+  - [x] **Validation:** all gateway files ≤95 LOC; gateway package at 100% test coverage.
+- [x] 9.1.2 [Complete] [Developer] - Wire the gatekeeper into `get_llm()` via `wrap_with_gatekeeper(...)` so every real Groq call (incl. `bind`/`bind_tools` children) is mediated; fakes injected in tests bypass it | DoD: no direct API call bypasses the gatekeeper (§5.1).
+- [x] 9.1.3 [Complete] [Tester] - Add `tests/test_gateway_config.py`, `test_gateway_rate_limiter.py`, `test_gateway_queue.py`, `test_gateway_gatekeeper.py`, `test_gateway_proxy.py` | DoD: window/queue/drain/retry/backpressure all covered with an injectable clock+sleep (no wall-clock waits).
+- [x] 9.1.4 [Complete] [Architect] - Author `docs/PRD_api_gatekeeper.md` (§2.3 dedicated PRD: theoretical background, I/O + metrics, constraints, alternatives, test scenarios) | DoD: PRD committed and listed in PLAN.md.
+
+### 9.2 SDK Layer Population (§4.1)
+- [x] 9.2.1 [Complete] [Developer] - Extract graph assembly from `main.py` into `src/hw4/graph.py` (importable package logic) | DoD: `build_graph` lives in the package; `main.py` re-exports it for back-compat.
+- [x] 9.2.2 [Complete] [Developer] - Implement `src/hw4/sdk/` facade: `core.py` (`GraphifySDK` exposing `build_graph`/`graph_diagram`/`run_repair`/`compare_efficiency`/`measure_live_efficiency`/`detect_orphans`/`report_orphans`/`get_llm`) and `repair.py` (`run_repair` + `RepairResult`) | DoD: external consumers run all operations via `from hw4.sdk import GraphifySDK` with no internal imports.
+- [x] 9.2.3 [Complete] [Developer] - Reduce `main.py` and `run_live_agent.py` to thin controllers that delegate to the SDK; `run_live_agent.py` now uses the gatekept LLM (closing a §5.1 bypass) | DoD: no business logic in the entry-point scripts.
+- [x] 9.2.4 [Complete] [Tester] - Add `tests/test_sdk.py` (graph build, structured `run_repair`, efficiency comparison, orphan detect/report, lazy-build caching, callback threading) | DoD: SDK exercised end-to-end with fakes; suite green at 182 tests.
+- [x] 9.2.5 [Complete] [Developer] - Update README.md ("SDK Layer" section) and PLAN.md (structure tree + ADR-002/ADR-003) | DoD: docs reflect the gateway + SDK architecture.

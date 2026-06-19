@@ -242,9 +242,25 @@ graph LR
 
 The **Gatekeeper** node is the key innovation: it prevents Math Quiz context from contaminating Polygons analysis and vice versa, directly addressing the "Lost in the Middle" problem.
 
+### SDK Layer — the single entry point
+
+All business operations are exposed through one facade, `GraphifySDK` (`src/hw4/sdk/`). Consumers — the CLI scripts, a future GUI, or third-party code — import the SDK and never reach into internal modules:
+
+```python
+from hw4.sdk import GraphifySDK
+
+sdk = GraphifySDK()                 # or GraphifySDK(llm=my_model) to inject one
+print(sdk.graph_diagram())          # compiled graph as Mermaid
+result = sdk.run_repair()           # full Router→Alpha→Gatekeeper→Beta run → RepairResult
+stats  = sdk.compare_efficiency()   # deterministic baseline-vs-guided token comparison
+orphans = sdk.detect_orphans()      # graph-analysis extension
+```
+
+`main.py` and `run_live_agent.py` are thin controllers that delegate to the SDK — no business logic lives in the entry-point scripts.
+
 ### Orchestration Implementation
 
-The graph is compiled in `main.py` via `build_graph(llm=None)`, which accepts an optional LLM override for testing. The nodes and their responsibilities:
+The graph is assembled in `src/hw4/graph.py` via `build_graph(llm=None)`, which accepts an optional LLM override for testing. It is reached through the SDK (`GraphifySDK.build_graph()` / `run_repair()`); `main.py` re-exports `build_graph` for backward compatibility. The nodes and their responsibilities:
 
 | Node | File | Responsibility |
 |------|------|----------------|

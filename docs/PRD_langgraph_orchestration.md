@@ -15,7 +15,7 @@ START → Router → SubagentAlpha → Gatekeeper → SubagentBeta → END
 ```
 
 ### 3.2 AgentState Schema
-State (`src/state.py`) must carry:
+State (`src/hw4/state.py`) must carry:
 | Field | Type | Purpose |
 |---|---|---|
 | `current_phase` | `str` | Active phase name (`"polygons"` / `"mathsquiz"`) |
@@ -35,7 +35,7 @@ State (`src/state.py`) must carry:
 - Sets `current_phase = "mathsquiz"`
 
 ### 3.5 Entry Point
-`main.py` must compile the graph and accept a `--dry-run` flag that substitutes a `FakeListChatModel` for the real LLM.
+Graph assembly lives in `src/hw4/graph.py` (`build_graph(llm=None)`) and is reached through the SDK (`GraphifySDK.build_graph()` / `run_repair()`). `build_graph` accepts an optional `llm` override so tests substitute a `FakeListChatModel` for the real LLM; `main.py` is a thin controller that prints the compiled graph's Mermaid diagram and re-exports `build_graph` for back-compat.
 
 ## 4. Non-Functional Requirements
 - Graph compilation must succeed in < 2 seconds (no network calls at import time)

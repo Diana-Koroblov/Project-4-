@@ -1,7 +1,7 @@
 # PRD: Node Content Extractor
 
 ## 1. Mechanism Overview
-The Node Content Extractor (`src/tools/node_extractor.py`) is a surgical LangGraph tool that allows a subagent to retrieve the source content of a single graph node by ID, without triggering any directory-wide scan. It is the primary mechanism for enforcing the Zero-Edge domain isolation protocol at the tool level.
+The Node Content Extractor (`src/hw4/tools/node_extractor.py`) is a surgical LangGraph tool that allows a subagent to retrieve the source content of a single graph node by ID, without triggering any directory-wide scan. It is the primary mechanism for enforcing the Zero-Edge domain isolation protocol at the tool level.
 
 ## 2. Problem Statement
 Subagents must not use glob patterns, `os.walk`, or directory reads to find files — doing so is the naive approach that inflates token usage and breaks domain isolation. The extractor provides a node-ID-addressed read that inherently limits the agent to nodes it already knows about from the Obsidian hot-context pages.

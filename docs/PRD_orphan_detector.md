@@ -1,7 +1,7 @@
 # PRD: Orphan Node Detector (Phase 7 Extension)
 
 ## 1. Mechanism Overview
-The Orphan Node Detector (`src/extensions/orphan_detector.py`) is the original extension for Phase 7. It scans a Graphify `graph.json` and identifies nodes with ≤1 graph edge — nodes that are effectively isolated from the main knowledge graph ("orphans"). These represent documentation stubs, dead code, or files with no meaningful cross-references.
+The Orphan Node Detector (`src/hw4/extensions/orphan_detector.py`) is the original extension for Phase 7. It scans a Graphify `graph.json` and identifies nodes with ≤1 graph edge — nodes that are effectively isolated from the main knowledge graph ("orphans"). These represent documentation stubs, dead code, or files with no meaningful cross-references.
 
 ## 2. Problem Statement
 During reverse-engineering, the Graphify graph contains nodes at different connectivity levels. Nodes with zero or one edge are poor navigation targets — the agent cannot "follow the graph" to or from them, making them invisible to a graph-guided agent unless explicitly known. Detecting and reporting orphans helps the developer identify dead documentation and poorly-integrated code before the agent starts.
@@ -73,5 +73,5 @@ Threshold: ≤ 1 edge
 - [ ] Running detector on `obsidian/graph.json` identifies at least the 4 known orphans
 - [ ] `OrphanNode.reason` correctly distinguishes `"isolated"` (0 edges) from `"weakly_connected"` (1 edge)
 - [ ] CLI produces `results/orphan_report.md` with valid Markdown
-- [ ] ≥ 85% test coverage of `src/extensions/orphan_detector.py` via `pytest-cov`
+- [ ] ≥ 85% test coverage of `src/hw4/extensions/orphan_detector.py` via `pytest-cov`
 - [ ] Ruff reports zero violations

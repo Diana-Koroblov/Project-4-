@@ -30,3 +30,10 @@ TOKEN_EFFICIENCY_TARGET = 0.70  # >70% reduction vs. naive baseline
 
 # Orphan detector default (used only if config/setup*.json is unavailable)
 DEFAULT_ORPHAN_THRESHOLD = 1
+
+# API gatekeeper (§5) — logger name and tuning defaults. Concrete rate limits
+# are never hardcoded; they are read per-provider from config/rate_limits.json.
+GATEWAY_LOGGER_NAME = "hw4.gateway"
+RATE_LIMIT_WINDOW_SECONDS = 60.0  # the "per-minute" window all limits are measured over
+DEFAULT_POLL_INTERVAL_SECONDS = 0.05  # max nap between drain attempts while queued
+CHARS_PER_TOKEN = 4  # rough tokens≈chars/4 heuristic for pre-call token estimates
