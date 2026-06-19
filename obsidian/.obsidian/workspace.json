@@ -14,7 +14,7 @@
               "type": "graph",
               "state": {},
               "icon": "lucide-git-fork",
-              "title": "תצוגת גרף"
+              "title": "Graph view"
             }
           }
         ]
@@ -40,7 +40,7 @@
                 "autoReveal": false
               },
               "icon": "lucide-folder-closed",
-              "title": "סייר קבצים"
+              "title": "Files"
             }
           },
           {
@@ -167,21 +167,22 @@
   },
   "left-ribbon": {
     "hiddenItems": {
-      "switcher:פתח את המחליף המהיר": false,
-      "graph:פתח תצוגת גרף": false,
-      "canvas:צור קנבס חדש": false,
-      "daily-notes:פתח את ההערה של היום": false,
-      "templates:הכנס תבנית": false,
-      "command-palette:פתח את לוח הפקודות": false,
-      "bases:צור בסיס חדש": false
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false,
+      "bases:Create new base": false
     }
   },
   "active": "926bbee903612be9",
   "lastOpenFiles": [
+    "hot_mathsquiz.md",
+    "hot_polygons.md",
+    "research_questions.md",
     "knowledge_delta.md",
     "index.md",
-    "hot_polygons.md",
-    "hot_mathsquiz.md",
     "GRAPH_REPORT.md",
     "graph.json",
     "_COMMUNITY_Community 0.md",

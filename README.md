@@ -19,7 +19,7 @@ hw_4/
 ├── docs/                    # PRD, PLAN, ADR, block schema, OOP schema
 │   ├── PRD.md
 │   ├── PLAN.md
-│   ├── block_schema.md      # Architectural block diagram (before-state)
+│   ├── block_schema.md      # Architectural block diagram (before + after state)
 │   └── oop_schema.md        # OOP class diagram (before + after state)
 ├── obsidian/                # Graphify products and Obsidian navigation vault
 │   ├── index.md             # Master router page for the agent
@@ -123,7 +123,7 @@ The `hot_*.md` pages pre-filter: they identify the exact file and the exact bug 
 
 ## Architectural Visualizations
 
-### Block Schema (Before State)
+### Block Schema (Before → After)
 See full annotated diagram: [`docs/block_schema.md`](docs/block_schema.md)
 
 ```mermaid
@@ -146,6 +146,29 @@ graph TD
     end
 
     Polygons_System -.-|"Zero-Edge Isolation"| MathQuiz_System
+```
+
+**After remediation:**
+
+```mermaid
+graph TD
+    subgraph Polygons_System["Polygons System"]
+        UI1[/"User Input: sides"/]
+        SHAPE["Shape(ABC)\n✅ abstract base\n✅ draw()* calculate_perimeter()*"]
+        PC["Polygon(Shape)\n✅ formula (n-2)*180/n\n✅ draws any n-gon"]
+        SHAPE -->|base class| PC
+        UI1 --> PC
+    end
+
+    subgraph MathQuiz_System["Math Quiz System"]
+        UI2[/"User Input: answers"/]
+        MAIN["MathQuiz class\n✅ == comparison, score++\n✅ 10 questions via run()"]
+        STEPS["step1-3.py\n(retained, superseded)"]
+        UI2 --> MAIN
+        STEPS -.->|superseded by| MAIN
+    end
+
+    Polygons_System -.-|"Zero-Edge Isolation (preserved)"| MathQuiz_System
 ```
 
 ### OOP Schema (Before → After)
