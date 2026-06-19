@@ -48,7 +48,12 @@ def extract_node_content(node_id: str) -> str:
     if not source_file:
         raise ValueError(f"Node {node_id!r} has no resolvable source file")
 
-    source_path = _SOURCE_ROOT / source_file
+    source_path = (_SOURCE_ROOT / source_file).resolve()
+    allowed = _SOURCE_ROOT.resolve()
+    if source_path != allowed and not source_path.is_relative_to(allowed):
+        raise PermissionError(
+            f"Node {node_id!r} source_file {source_file!r} resolves outside the allowed root"
+        )
     if not source_path.exists():
         raise FileNotFoundError(f"Source file for node {node_id!r} not found: {source_path}")
 

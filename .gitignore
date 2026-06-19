@@ -18,3 +18,9 @@ credentials.json
 # Runtime logs (rotating debug logs are regenerated on every run)
 *.log
 *.log.*
+
+# Test/lint tooling artifacts (regenerated on every run)
+.coverage
+.coverage.*
+.pytest_cache/
+.ruff_cache/

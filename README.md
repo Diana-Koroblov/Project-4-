@@ -87,7 +87,7 @@ uv run ruff check src/
 
 ## Research Questions
 
-These 8 questions guided the entire investigation, as required by the assignment (§4):
+These 8 questions guided the entire investigation, as required by the assignment (§4). The same answers are mirrored in the Obsidian vault ([`obsidian/research_questions.md`](obsidian/research_questions.md)) and the reports ([`reports/research_questions.md`](reports/research_questions.md)), per the §4 requirement that they appear in the README, the reports, and the Obsidian pages:
 
 **1. What is the actual architecture of the project, and what did you discover that wasn't obvious at first glance?**
 The project has two completely independent systems sharing a single repository with no imports between them. What wasn't obvious initially is that `mathsquiz.py` is not a "final" version — it is itself broken and the step files are not scaffolding toward it but rather separate incomplete attempts. Graphify correctly identified 6 communities, with Polygons and Math Quiz isolated from each other.

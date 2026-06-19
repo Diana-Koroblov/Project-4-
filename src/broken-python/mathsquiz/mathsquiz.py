@@ -5,11 +5,11 @@ The legacy step files (``mathsquiz-step1.py`` .. ``mathsquiz-step3.py``) are
 superseded by this single :class:`MathQuiz` class; see
 ``reports/mathsquiz_step_analysis.md`` for the evolution trail.
 
-The original script shipped with six bugs (Python-2 ``print`` statements, ``=``
-used for comparison, ``else if`` instead of ``elif``, a score that never
-incremented, every question mislabelled "Question 1", and wrong expected
-answers). All are fixed here, and the ten questions now run cleanly to a
-maximum score of 10.
+The original script shipped with seven bugs (Python-2 ``print`` statements,
+``=`` used for comparison, ``else if`` instead of ``elif``, a score that never
+incremented, every question mislabelled "Question 1", wrong expected answers,
+and only 6 of the promised 10 questions implemented). All are fixed here, and
+the ten questions now run cleanly to a maximum score of 10.
 """
 
 

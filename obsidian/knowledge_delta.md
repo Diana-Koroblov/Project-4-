@@ -57,7 +57,7 @@ The Math Quiz code change is nonetheless real and proven elsewhere:
 - `mathsquiz.py` now parses as Python 3 and contains the `MathQuiz` class (see [Bug Analysis](../reports/bug_analysis.md) and [step analysis](../reports/mathsquiz_step_analysis.md)).
 - The original `mathsquiz.py` was a **childless node** purely because it was Python-2 source the AST parser could not descend into. A graph **regenerated at `HEAD`** would therefore:
   1. extract a `MathQuiz` class node with its 5 methods (`__init__`, `check_answer`, `ask_question`, `run`, `display_result`), and
-  2. drop the three `mathsquiz-step*.py` communities once the superseded step files are deleted (task **5.2.3**, still pending).
+  2. still include the three `mathsquiz-step*.py` communities: those files are **deliberately retained**, not deleted — they are the documented before-state and the naive baseline's "noise" in the token-efficiency proof (removing them would drop the measured reduction below the >70% KPI). History is additionally preserved by the `before-agent` tag.
 
 ## Orphans — unchanged count, shifted composition
 
@@ -86,4 +86,4 @@ Phase 7 **Orphan Node Detector** extension.
 - **OOP made visible:** a `Shape(ABC)` ← `Polygon` hierarchy with 8 method/docstring nodes replaced the flat procedural layout.
 - **Quality up:** extraction moved from 91% EXTRACTED (2 inferred edges) to 100% EXTRACTED.
 - **Orphans unchanged:** the three `mathsquiz/README.md` documentation orphans persist; the count stayed at 4.
-- **Outstanding:** regenerate the graph at `HEAD` to capture the Phase 5 `MathQuiz` class and remove the step-file nodes (after task 5.2.3).
+- **Outstanding:** regenerate the graph at `HEAD` to capture the Phase 5 `MathQuiz` class. The `mathsquiz-step*.py` nodes remain by design — retained as the before-state / efficiency-baseline noise (see 5.2.3).

@@ -15,5 +15,8 @@ Welcome to the project's knowledge space. This repository contains two independe
 #### Graphic Mapping
 * [[GRAPH_REPORT]] - The automatically generated report that maps the entire system.
 
+#### Research & Investigation
+* [[research_questions]] - The 8 understanding/research questions (§4) answered from the investigation: architecture, God Nodes, root causes, graph-vs-linear value, and token savings.
+
 #### Before / After (post-refactoring)
 * [[knowledge_delta]] - What changed between the before-state and after-state graphs (God Functions eliminated, OOP nodes added, orphans unchanged).

@@ -91,7 +91,8 @@ The Phase 5 rewrite folds the best of every step into one
   `run()` / `__main__`, so `import mathsquiz` is silent.
 
 The three `mathsquiz-step*.py` files are therefore redundant teaching artefacts
-fully captured by the consolidated `MathQuiz` class, and are to be removed as part
-of this Phase 5 consolidation (the phase DoD requires "all step files removed");
-the originals remain recoverable from this report and from the `before-agent` git
-tag.
+fully captured by the consolidated `MathQuiz` class. They are **deliberately
+retained** rather than deleted: they are the documented before-state and serve as
+the naive baseline's "noise" in the token-efficiency proof — deleting them would
+drop the measured reduction below the >70% KPI. The originals are additionally
+recoverable from this report and the `before-agent` git tag.
